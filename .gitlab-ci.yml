@@ -1,0 +1,57 @@
+stages:
+  - latex
+  - badges
+
+presentations:
+  stage: latex
+  tags:
+    - docker
+  image: cs6-gitlab.cs6.fau.de:4567/containers/latex-builder:testing
+  script:
+    - echo $CI_COMMIT_SHA > .git/refs/heads/main
+    - mkdir presentations
+    - |+
+      for filename in *.tex
+      do
+        base_name=$(basename "${filename}")
+        base_name_without_tex=${base_name%".tex"}
+        latexmk -pdf "${base_name_without_tex}.tex"
+        mv "${base_name_without_tex}.pdf" "${base_name_without_tex}-demo.pdf"
+        mkdir "${base_name_without_tex}"
+        for i in {10..30}
+        do
+          cp "${filename}" "${base_name_without_tex}-${i}-pages.tex"
+          sed -i -e "s/pages{.*}/pages{${i}}/g" "${base_name_without_tex}-${i}-pages.tex"
+          latexmk -pdf "${base_name_without_tex}-${i}-pages.tex"
+          mv "${base_name_without_tex}-${i}-pages.pdf" "${base_name_without_tex}/${base_name_without_tex}-${i}-pages.pdf"
+        done
+      done
+  artifacts:
+    name: "presentations"
+    paths:
+      - "*.pdf"
+      - "exam-introduction*/*.pdf"
+  variables:
+    GIT_SSL_NO_VERIFY: "true"
+
+badges:
+  stage: badges
+  image: python:3.6.6
+  tags:
+    - docker
+  only:
+    refs:
+      - main
+  script:
+    - pip install anybadge
+    - anybadge -l " Download PDFs " -p " Commit " -s " " -v $CI_COMMIT_SHORT_SHA -f pdfs.svg -c '#2F586E'
+    - anybadge -l " Download Exam Introduction " -p " Commit " -s " " -v $CI_COMMIT_SHORT_SHA -f exam-intro.svg -c '#2F586E'
+  artifacts:
+    paths:
+      - pdfs.svg
+      - exam-intro.svg
+  
+  variables:
+    GIT_SSL_NO_VERIFY: "true"
+
+

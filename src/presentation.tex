@@ -1,0 +1,93 @@
+\documentclass[aspectratio=169,t]{beamer}
+
+% Set the language based on the setting (default is english)
+\ifdefined\german
+	\newcommand{\translation}[2]{{#2}}
+\else
+	\newcommand{\translation}[2]{{#1}}
+\fi
+
+% Import Packages
+\usepackage[\translation{english}{ngerman}]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+%\usepackage[backend=biber,sorting=none,doi=true,style=ieee]{biblatex}
+\usepackage{tikz}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{shadows.blur}
+\usepackage{ifthen}
+\usepackage{animate}
+\usetikzlibrary{positioning}
+\usetikzlibrary{math}
+\usepackage{calc}
+\usepackage{xstring}
+\usepackage{catchfile}
+\usepackage{datetime}
+\usepackage{hyperref}
+
+% Git SHA
+\CatchFileDef{\HEAD}{.git/refs/heads/main}{}
+\newcommand{\gitrevision}{%
+	\StrLeft{\HEAD}{8}%
+}
+
+% Theme
+\usetheme[%
+	image,%
+	longtitle,%
+	inst=tf%
+]{fau}
+
+% Enable semi-transparent animation preview
+\setbeamercovered{transparent}
+
+% Introduce numbering of sections
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{section}[sections numbered]
+
+\lstset{%
+  language=C++,
+  tabsize=2,
+  basicstyle=\tt,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red},
+  numbers=left,
+  numbersep=0.5em,
+  xleftmargin=1em,
+  numberstyle=\tt
+}
+
+% Custom footnote
+\def\footnotepresentation{Version: \gitrevision}
+
+% Title, authors, and institute
+\title[\translation{Exam Information: \exam}{Klausurinformationen: \exam}]{\translation{Exam Information: \exam}{Klausurinformationen: \exam}}
+\author[\translation{The~\exam~team}{Das~\exam~Team}]{\translation{The~\exam~team}{Das~\exam~Team}}
+\institute[\translation{Chair of Computer Science 6}{Lehrstuhl für Informatik 6}]{\translation{Chair of Computer Science 6}{Lehrstuhl für Informatik 6}}
+
+% Date (only display the month and year to be able to use a compiled version for a whole month)
+\newdateformat{monthyeardate}{%
+\monthname[\THEMONTH], \THEYEAR}
+\date{\monthyeardate\today}
+
+% Set a watermark to warn if the number of pages is not set
+\ifthenelse{\equal{\pages}{\string ?}}{
+	\usepackage[pos={0.815\paperwidth, 0.3\paperheight}, scale=0.6, angle=335, firstpageonly=true, color=red!40]{draftwatermark}
+	\setbeamercolor{background canvas}{bg=}
+	\SetWatermarkText{
+	\begin{tikzpicture}
+		\normalsize
+		\node[circle,draw=faureddark!80,line width=3pt,fill=faured!5,blur shadow,align=center,text=faureddark,font=\sffamily\bfseries]  
+		{{\Large \translation{Warning}{Warnung}!} \\ \translation{Before use}{Vor Nutzung} \\ \translation{the number of}{muss die Anzahl} \\ \translation{exam pages}{der Klausurseiten} \\  \translation{must be}{spezifiziert} \\ \translation{specified}{werden}};
+	\end{tikzpicture}
+	}
+}{}
+
+\begin{document}
+ \input{src/content}
+\end{document}
+
