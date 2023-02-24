@@ -6,7 +6,7 @@ presentations:
   stage: latex
   tags:
     - docker
-  image: cs6-gitlab.cs6.fau.de:4567/containers/latex-builder:latest
+  image: cs6-gitlab.cs6.fau.de:4567/containers/latex-builder:testing
   script:
     - echo $CI_COMMIT_SHA > .git/refs/heads/main
     - mkdir presentations
