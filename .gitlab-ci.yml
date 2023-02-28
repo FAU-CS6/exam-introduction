@@ -44,8 +44,8 @@ badges:
       - main
   script:
     - pip install anybadge
-    - anybadge -l " Download PDFs " -p " Commit " -s " " -v $CI_COMMIT_SHORT_SHA -f pdfs.svg -c '#2F586E'
-    - anybadge -l " Download Exam Introduction " -p " Commit " -s " " -v $CI_COMMIT_SHORT_SHA -f exam-intro.svg -c '#2F586E'
+    - anybadge -l " Download PDFs " -v " Commit $CI_COMMIT_SHORT_SHA" -f pdfs.svg -c '#2F586E'
+    - anybadge -l " Download Exam Introduction " -v " Commit $CI_COMMIT_SHORT_SHA" -f exam-intro.svg -c '#2F586E'
   artifacts:
     paths:
       - pdfs.svg
