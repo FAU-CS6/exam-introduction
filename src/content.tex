@@ -199,8 +199,10 @@
 % Lengths
 \newlength{\outerradius}
 \newlength{\innerradius}
+\newlength{\boundarybox}
 \setlength{\outerradius}{2cm}
 \setlength{\innerradius}{1.5cm}
+\setlength{\boundarybox}{2.7cm}
 
 % Functions
 \newcommand{\stunden}[1]{\pgfmathparse{(int(floor(#1/3600)))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
@@ -214,9 +216,10 @@
 
 \begin{frame}{\translation{Then let's start ...}{Dann los ...}}
 	\begin{center}
-		\begin{animateinline}[controls={play, stop, step}, autoplay, poster=first]{0.016}  
+		\begin{animateinline}[controls={play, stop, step}, autoplay, poster=first]{0.01666667}  
 			\multiframe{\duration}{n=0+60}{
 				\begin{tikzpicture}
+					\fill[white] (-\boundarybox,-\boundarybox) rectangle (\boundarybox,\boundarybox);
 					\fill[faugray!30] (0,0) circle (\outerradius);
 					\pgfmathparse{(\duration*60)-\n}
 					\ifthenelse{900<\pgfmathresult}{\fill[faucyan!50] (0,0) -- (0, \outerradius)}{\ifthenelse{60<\pgfmathresult}{\fill[fauorange!50] (0,0) -- (0, \outerradius)}{\fill[faured!50] (0,0) -- (0, \outerradius)}}
@@ -230,6 +233,7 @@
 			}
 			\newframe[1]
 			\begin{tikzpicture}
+				\fill[white] (-\boundarybox,-\boundarybox) rectangle (\boundarybox,\boundarybox);
 				\fill[faugray!30] (0,0) circle (\outerradius);
 				\fill[faured!30] (0,0) -- (0, \outerradius)
 				arc (90:90-3.6*100:\outerradius) -- (0,0);
