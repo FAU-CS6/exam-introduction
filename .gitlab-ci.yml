@@ -1,36 +1,29 @@
 stages:
-  - latex
+  - prepare
+  - build
   - badges
 
-presentations:
-  stage: latex
+prepare_build_stage:
+  stage: prepare
   tags:
     - docker
-  image: cs6-gitlab.cs6.fau.de:4567/containers/latex-builder:latest
+  image: debian:latest
   script:
-    - echo $CI_COMMIT_SHA > .git/refs/heads/main
-    - mkdir presentations
-    - |+
-      for filename in *.tex
-      do
-        base_name=$(basename "${filename}")
-        base_name_without_tex=${base_name%".tex"}
-        latexmk -pdf "${base_name_without_tex}.tex"
-        mv "${base_name_without_tex}.pdf" "${base_name_without_tex}-demo.pdf"
-        mkdir "${base_name_without_tex}"
-        for i in {10..30}
-        do
-          cp "${filename}" "${base_name_without_tex}-${i}-pages.tex"
-          sed -i -e "s/pages{.*}/pages{${i}}/g" "${base_name_without_tex}-${i}-pages.tex"
-          latexmk -pdf "${base_name_without_tex}-${i}-pages.tex"
-          mv "${base_name_without_tex}-${i}-pages.pdf" "${base_name_without_tex}/${base_name_without_tex}-${i}-pages.pdf"
-        done
-      done
+    - chmod +x .gitlab-ci-generate-ci-yaml.sh
+    - ./.gitlab-ci-generate-ci-yaml.sh
   artifacts:
-    name: "presentations"
     paths:
-      - "*.pdf"
-      - "exam-introduction*/*.pdf"
+      - .presentations-ci.yml
+  variables:
+    GIT_SSL_NO_VERIFY: "true"
+
+build_presentations:
+  stage: build
+  trigger:
+    include:
+      - artifact: .presentations-ci.yml
+        job: prepare_build_stage
+    strategy: depend
   variables:
     GIT_SSL_NO_VERIFY: "true"
 
