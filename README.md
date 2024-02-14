@@ -23,6 +23,7 @@ Here is a small list of tested compatible/not compatible readers:
 | PDF Reader | Operating System | Tested Version of the PDF Reader |
 | ---      | ---      | ---      |
 | Adobe Acrobat Pro | Windows 11 Pro | 22.003.20322 |
+| Adobe Acrobat Pro | macOS Sonoma 14.2.1 | 23.8.20470.0 |
 | Okular | Debian 11 | 20.12.3 |
 
 It can be assumed that the compatible PDF readers are compatible regardless of operating system and version (at least if newer than the tested one). A short test before the exam is nevertheless recommended.
