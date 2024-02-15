@@ -3,39 +3,39 @@
 		\item \translation{Fill the room from \textbf{front to back}}{Füllen Sie den Raum von \textbf{vorne nach hinten}}
 		\item \translation{Keep at least \textbf{1m distance} to the person sitting next to you}{Halten Sie mindestens \textbf{1m Abstand} zum nächsten Sitznachbarn}
 		\item \translation{\textbf{Prepare} your seating area:}{\textbf{Bereiten} Sie Ihren Tisch vor:}
-		\begin{columns}[t]
-			\begin{column}{0.25\columnwidth}
-				\begin{exampleblock}{\centering\translation{Necessary \\ \small to have at your seat}{Benötigt \\ \small am eigenen Tisch}}
-					\begin{itemize}
-						\item \translation{Pens}{Stifte}
-						\item \translation{Correction tape}{Korrekturroller}
-						\item \translation{Photo ID}{Lichtbildausweis}
-					\end{itemize}
-				\end{exampleblock}
-			\end{column}
-			\begin{column}{0.25\columnwidth}
-				\begin{block}{\centering\translation{Permitted \\ \small to have at your seat}{Erlaubt \\ \small am eigenen Tisch}}
-					\begin{itemize}
-						\ifdefined\cheatsheetAllowed
-							\item \translation{Cheat sheet}{Cheat sheet}
-						\else
-							% Do nothing (\else is necessary, otherwise MiKTeX throws an "! Extra \fi" error message)
-						\fi
-						\item \translation{Writing utensils}{Schreibmaterial}
-						\item \translation{Food}{Essen}
-						\item \translation{Drinks}{Trinken}
-					\end{itemize}
-				\end{block}
-			\end{column}
-			\begin{column}{0.25\columnwidth}
-				\begin{alertblock}{\centering\translation{Forbidden \\ \small to have at your seat}{Verboten \\ \small am eigenen Tisch}}
-					\begin{itemize}
-						\item \translation{Electronic devices \\ (incl. Smartwatches, Earbuds, etc.)}{Elektronische Geräte \\ (inkl. Smartwatches, Kopfhörer, etc.)}
-						\item \translation{Jackets/Bags/Other items}{Jacken/Taschen/ sonstige Gegenstände}
-					\end{itemize}
-				\end{alertblock}
-			\end{column}
-		\end{columns}
+		      \begin{columns}[t]
+			      \begin{column}{0.25\columnwidth}
+				      \begin{exampleblock}{\centering\translation{Necessary \\ \small to have at your seat}{Benötigt \\ \small am eigenen Tisch}}
+					      \begin{itemize}
+						      \item \translation{Pens}{Stifte}
+						      \item \translation{Correction tape}{Korrekturroller}
+						      \item \translation{Photo ID}{Lichtbildausweis}
+					      \end{itemize}
+				      \end{exampleblock}
+			      \end{column}
+			      \begin{column}{0.25\columnwidth}
+				      \begin{block}{\centering\translation{Permitted \\ \small to have at your seat}{Erlaubt \\ \small am eigenen Tisch}}
+					      \begin{itemize}
+						      \ifdefined\cheatsheetAllowed
+						      \item \translation{Cheat sheet}{Cheat sheet}
+						            \else
+						            % Do nothing (\else is necessary, otherwise MiKTeX throws an "! Extra \fi" error message)
+						            \fi
+						      \item \translation{Writing utensils}{Schreibmaterial}
+						      \item \translation{Food}{Essen}
+						      \item \translation{Drinks}{Trinken}
+					      \end{itemize}
+				      \end{block}
+			      \end{column}
+			      \begin{column}{0.25\columnwidth}
+				      \begin{alertblock}{\centering\translation{Forbidden \\ \small to have at your seat}{Verboten \\ \small am eigenen Tisch}}
+					      \begin{itemize}
+						      \item \translation{Electronic devices \\ (incl. Smartwatches, Earbuds, etc.)}{Elektronische Geräte \\ (inkl. Smartwatches, Kopfhörer, etc.)}
+						      \item \translation{Jackets/Bags/Other items}{Jacken/Taschen/ sonstige Gegenstände}
+					      \end{itemize}
+				      \end{alertblock}
+			      \end{column}
+		      \end{columns}
 	\end{itemize}
 \end{frame}
 
@@ -45,46 +45,46 @@
 	\begin{itemize}
 		\item \translation{The total processing time is \textbf{\duration\ minutes}}{Die Gesamtbearbeitungszeit beträgt \textbf{\duration\ Minuten}}
 		\item \translation{The exam has \textbf{\pages\ pages} in total}{Die Klausur hat \textbf{\pages\ Seiten}}
-		\ifdefined\cheatsheetAllowed
-			\ifthenelse{\equal{\cheatsheetAllowed}{1}}{
-				\item \translation{You \textbf{may} use a single hand-written cheat sheet (paper format A4, only front side)}{Sie \textbf{dürfen} ein handbeschriebenes Cheat Sheet verwenden (DIN A4, nur Vorderseite)}
-			}{
-				\item \translation{You \textbf{may} use a single hand-written cheat sheet (paper format A4, front and back side)}{Sie \textbf{dürfen} ein handbeschriebenes Cheat Sheet verwenden (DIN A4, Vorder- und Rückseite)}
-			}
-			\item \translation{You \textbf{may not} use any other aids}{Sie \textbf{dürfen keine} anderen Hilfsmittel verwenden}
-		\else
-			\item \translation{You \textbf{may not} use any documents or any other aids}{Sie \textbf{dürfen keine} Unterlagen oder sonstigen Hilfsmittel verwenden.}
-		\fi
+		      \ifdefined\cheatsheetAllowed
+		      \ifthenelse{\equal{\cheatsheetAllowed}{1}}{
+		\item \translation{You \textbf{may} use a single hand-written cheat sheet (paper format A4, only front side)}{Sie \textbf{dürfen} ein handbeschriebenes Cheat Sheet verwenden (DIN A4, nur Vorderseite)}
+		      }{
+		\item \translation{You \textbf{may} use a single hand-written cheat sheet (paper format A4, front and back side)}{Sie \textbf{dürfen} ein handbeschriebenes Cheat Sheet verwenden (DIN A4, Vorder- und Rückseite)}
+		      }
+		\item \translation{You \textbf{may not} use any other aids}{Sie \textbf{dürfen keine} anderen Hilfsmittel verwenden}
+		      \else
+		\item \translation{You \textbf{may not} use any documents or any other aids}{Sie \textbf{dürfen keine} Unterlagen oder sonstigen Hilfsmittel verwenden.}
+		      \fi
 		\item \translation{Use only \textbf{dark blue} or \textbf{black} pens}{Nehmen Sie die Beantwortung in \textbf{dunkelblau} oder \textbf{schwarz} vor}
-		\begin{itemize}
-			\item \translation{Do not use other shades}{Verwenden Sie keine anderen Farbtöne}
-			\item \translation{Do not use a pencil}{Verwenden Sie keinen Bleistift}
-		\end{itemize}
+		      \begin{itemize}
+			      \item \translation{Do not use other shades}{Verwenden Sie keine anderen Farbtöne}
+			      \item \translation{Do not use a pencil}{Verwenden Sie keinen Bleistift}
+		      \end{itemize}
 		\item \translation{Use \textbf{correction tape} to remove wrong answers}{Verwenden Sie einen \textbf{Korrekturroller}, um falsche Antworten zu korrigieren}
-		\begin{itemize}
-			\item \translation{Do not use ink filler or correction fluid}{Verwenden Sie keinen Tintenkiller oder Korrekturflüssigkeit}
-		\end{itemize}
+		      \begin{itemize}
+			      \item \translation{Do not use ink filler or correction fluid}{Verwenden Sie keinen Tintenkiller oder Korrekturflüssigkeit}
+		      \end{itemize}
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{\translation{General information II}{Allgemeine Informationen II}}
 	\begin{itemize}
 		\item \translation{Use \textbf{only} the paper of the exam copy}{Verwenden Sie \textbf{ausschließlich} das Papier des Klausurexemplars}
-		\begin{itemize}
-			\item \translation{Only sheets that can be clearly assigned to your exam will be considered for evaluation}{Bei der Bewertung werden nur Blätter berücksichtigt, die Ihrer Klausur eindeutig zugeordnet werden können}
-		\end{itemize}
+		      \begin{itemize}
+			      \item \translation{Only sheets that can be clearly assigned to your exam will be considered for evaluation}{Bei der Bewertung werden nur Blätter berücksichtigt, die Ihrer Klausur eindeutig zugeordnet werden können}
+		      \end{itemize}
 		\item \translation{Do \textbf{not tamper} with the corrector fields and the calibration symbols}{Manipulieren Sie die Korrektorenfelder und die Kalibrierungssymbole \textbf{nicht}}
-		\begin{itemize}
-			\item \translation{All manipulations will be considered as attempted cheating and will result in failing the exam}{Alle Manipulationen werden als Täuschungsversuch gewertet und führen zum Nichtbestehen der Prüfung}
-		\end{itemize}
+		      \begin{itemize}
+			      \item \translation{All manipulations will be considered as attempted cheating and will result in failing the exam}{Alle Manipulationen werden als Täuschungsversuch gewertet und führen zum Nichtbestehen der Prüfung}
+		      \end{itemize}
 		\item \translation{Do \textbf{not remove} the staple of the exam}{Entfernen Sie die Heftklammer der Klausur \textbf{nicht}}
-		\begin{itemize}
-			\ifdefined\cheatsheetAllowed
-			\item \translation{You must hand in all exam sheets and the cheat sheet after the exam}{Sie müssen alle Aufgabenblätter und das Cheat Sheet am Ende der Klausur abgeben}
-			\else
-			\item \translation{You must hand in all exam sheets after the exam}{Sie müssen alle Aufgabenblätter am Ende der Klausur abgeben}
-			\fi
-		\end{itemize}
+		      \begin{itemize}
+			      \ifdefined\cheatsheetAllowed
+			      \item \translation{You must hand in all exam sheets and the cheat sheet after the exam}{Sie müssen alle Aufgabenblätter und das Cheat Sheet am Ende der Klausur abgeben}
+			            \else
+			      \item \translation{You must hand in all exam sheets after the exam}{Sie müssen alle Aufgabenblätter am Ende der Klausur abgeben}
+			            \fi
+		      \end{itemize}
 	\end{itemize}
 \end{frame}
 
@@ -95,11 +95,11 @@
 			\begin{itemize}
 				\item \translation{Answer all questions \textbf{unambiguously}}{Beantworten Sie alle Fragen \textbf{eindeutig}}
 				\item \translation{Do \textbf{not} write outside of the designated answer boxes}{Schreiben Sie \textbf{nicht} außerhalb der vorgesehenen Antwortkästen}
-				\begin{itemize}
-					\item \translation{If you need more space, you can use the backs of other pages}{Wenn Sie mehr Platz benötigen, verwenden Sie die Rückseiten der Klausurangabe}
-					\item \translation{Make sure that your pen does not press through to the front side in the process}{Achten Sie darauf, dass sich Ihr Stift dabei nicht auf die Vorderseite durchdrückt}
-					\item \translation{Make a clear reference to the reverse side to be considered in the correction in the original answer box}{Bringen Sie einen eindeutigen Verweis auf die bei der Korrektur zu berücksichtigende Rückseite im ursprünglichen Antwortkasten an}
-				\end{itemize}
+				      \begin{itemize}
+					      \item \translation{If you need more space, you can use the backs of other pages}{Wenn Sie mehr Platz benötigen, verwenden Sie die Rückseiten der Klausurangabe}
+					      \item \translation{Make sure that your pen does not press through to the front side in the process}{Achten Sie darauf, dass sich Ihr Stift dabei nicht auf die Vorderseite durchdrückt}
+					      \item \translation{Make a clear reference to the reverse side to be considered in the correction in the original answer box}{Bringen Sie einen eindeutigen Verweis auf die bei der Korrektur zu berücksichtigende Rückseite im ursprünglichen Antwortkasten an}
+				      \end{itemize}
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.45\columnwidth}
@@ -117,27 +117,27 @@
 			\vspace{-0.4cm}
 			\begin{itemize}
 				\item \translation{A multiple or single choice option is considered checked when the corresponding box is \textbf{completely filled}}{Eine Multiple- oder Single-Choice-Auswahl- möglichkeit gilt als markiert, wenn das ent- sprechende Kästchen \textbf{vollständig gefüllt} ist}
-				\begin{itemize}
-					\item \translation{To mark an accidentally selected option as unchecked, it is \textbf{not sufficient} to cross out the selection, since there will still be markings inside the respective box afterwards}{Um eine versehentlich markierte Auswahlmöglichkeit als nicht markiert zu kennzeichnen, ist es \textbf{nicht ausreichend}, die Markierung durchzustreichen, da sich danach immer noch Markierungen innerhalb des jeweiligen Kästchens befinden}
-					\item \translation{Instead, you must \textbf{completely remove} the box with correction tape. To select this option again, draw a completely filled box over your correction}{Stattdessen müssen Sie das Kästchen \textbf{vollständig} mit Korrekturband \textbf{entfernen}. Um doch wieder diese Auswahlmöglichkeit zu markieren, zeichnen Sie ein vollständig gefülltes Kästchen über Ihre Korrektur}
-				\end{itemize}
+				      \begin{itemize}
+					      \item \translation{To mark an accidentally selected option as unchecked, it is \textbf{not sufficient} to cross out the selection, since there will still be markings inside the respective box afterwards}{Um eine versehentlich markierte Auswahlmöglichkeit als nicht markiert zu kennzeichnen, ist es \textbf{nicht ausreichend}, die Markierung durchzustreichen, da sich danach immer noch Markierungen innerhalb des jeweiligen Kästchens befinden}
+					      \item \translation{Instead, you must \textbf{completely remove} the box with correction tape. To select this option again, draw a completely filled box over your correction}{Stattdessen müssen Sie das Kästchen \textbf{vollständig} mit Korrekturband \textbf{entfernen}. Um doch wieder diese Auswahlmöglichkeit zu markieren, zeichnen Sie ein vollständig gefülltes Kästchen über Ihre Korrektur}
+				      \end{itemize}
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.45\columnwidth}
 			\begin{center}
 				\vspace{-0.4cm}
 				\begin{column}{0.65\columnwidth}
-				\begin{alertblock}{\centering \translation{Incorrect markings}{Inkorrekte Markierungen}}
-					\vspace{0.2cm}
-					\centering \includegraphics[width=0.5cm]{images/not-valid-1.png} \hspace{0.2cm} \includegraphics[width=0.5cm]{images/not-valid-2.png}
-					\vspace{0.2cm}
-				\end{alertblock}
-				
-				\begin{exampleblock}{\centering \translation{Correct marking}{Korrekte Markierung}}
-					\vspace{0.2cm}
-					\centering \includegraphics[width=0.5cm]{images/valid.png}
-					\vspace{0.2cm}
-				\end{exampleblock}
+					\begin{alertblock}{\centering \translation{Incorrect markings}{Inkorrekte Markierungen}}
+						\vspace{0.2cm}
+						\centering \includegraphics[width=0.5cm]{images/not-valid-1.png} \hspace{0.2cm} \includegraphics[width=0.5cm]{images/not-valid-2.png}
+						\vspace{0.2cm}
+					\end{alertblock}
+
+					\begin{exampleblock}{\centering \translation{Correct marking}{Korrekte Markierung}}
+						\vspace{0.2cm}
+						\centering \includegraphics[width=0.5cm]{images/valid.png}
+						\vspace{0.2cm}
+					\end{exampleblock}
 				\end{column}
 			\end{center}
 		\end{column}
@@ -151,9 +151,9 @@
 		\item \translation{We will now \textbf{hand out} the exam}{Wir \textbf{teilen} nun die Klausurexemplare \textbf{aus}}
 		\item \translation{\textbf{Fill in} the \textbf{cover sheet}}{\textbf{Füllen} Sie das Deckblatt \textbf{aus}}
 		\item \translation{After \textbf{all} participants have completed filling in the cover sheet, we will \textbf{announce} the start}{Nachdem \textbf{alle} Teilnehmer das Deckblatt ausgefüllt haben, \textbf{geben wir} den Beginn bekannt}
-		\begin{itemize}
-			\item \translation{From that point on, you will have \textbf{\duration\ minutes} of processing time}{Ab diesem Zeitpunkt haben Sie \duration\ Minuten Bearbeitungszeit}
-		\end{itemize}
+		      \begin{itemize}
+			      \item \translation{From that point on, you will have \textbf{\duration\ minutes} of processing time}{Ab diesem Zeitpunkt haben Sie \duration\ Minuten Bearbeitungszeit}
+		      \end{itemize}
 	\end{itemize}
 
 	\begin{center}
@@ -176,11 +176,11 @@
 			\vspace{-0.4cm}
 			\begin{itemize}
 				\item \translation{To prepare your exam for automated processing, enter your \textbf{matriculation number} in the matrix}{Um Ihre Klausur für die automatisierte Verarbeitung vorzubereiten, tragen Sie Ihre \textbf{Matrikelnummer} in die Matrix ein}
-				\begin{itemize}
-					\item \translation{Each column of the matrix represents one digit of your matriculation number \\ (from \textbf{left to right}: 1st column -> 1st digit, 2nd column -> 2nd digit etc.)}{Jede Spalte der Matrix steht für eine Stelle Ihrer Matrikelnummer (von \textbf{links nach rechts}: 1.Spalte -> 1.Stelle, 2.Spalte -> 2.Stelle usw.)}
-					\item \translation{Each row of the matrix represents the corresponding digit}{Jede Zeile der Matrix steht für die jeweilige Ziffer der entsprechenden Stelle}
-					\item \translation{To select a digit, fill in the box to the left of it \textbf{completely}}{Um eine Ziffer auszuwählen, füllen Sie das Kästchen links daneben \textbf{vollständig} aus}
-				\end{itemize}
+				      \begin{itemize}
+					      \item \translation{Each column of the matrix represents one digit of your matriculation number \\ (from \textbf{left to right}: 1st column -> 1st digit, 2nd column -> 2nd digit etc.)}{Jede Spalte der Matrix steht für eine Stelle Ihrer Matrikelnummer (von \textbf{links nach rechts}: 1.Spalte -> 1.Stelle, 2.Spalte -> 2.Stelle usw.)}
+					      \item \translation{Each row of the matrix represents the corresponding digit}{Jede Zeile der Matrix steht für die jeweilige Ziffer der entsprechenden Stelle}
+					      \item \translation{To select a digit, fill in the box to the left of it \textbf{completely}}{Um eine Ziffer auszuwählen, füllen Sie das Kästchen links daneben \textbf{vollständig} aus}
+				      \end{itemize}
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.45\columnwidth}
@@ -197,12 +197,18 @@
 \section{\translation{Is everyone ready?}{Ist jeder bereit?}}
 
 % Lengths
+\newlength{\eventradius}
 \newlength{\outerradius}
+\newlength{\shadowradius}
 \newlength{\innerradius}
-\newlength{\boundarybox}
+\newlength{\boundaryboxx}
+\newlength{\boundaryboxy}
+\setlength{\eventradius}{2.5cm}
 \setlength{\outerradius}{2cm}
+\setlength{\shadowradius}{2.1cm}
 \setlength{\innerradius}{1.5cm}
-\setlength{\boundarybox}{2.7cm}
+\setlength{\boundaryboxx}{7cm}
+\setlength{\boundaryboxy}{2.7cm}
 
 % Functions
 \newcommand{\stunden}[1]{\pgfmathparse{(int(floor(#1/3600)))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
@@ -212,35 +218,78 @@
 \pgfmathdeclarefunction{prozent}{2}{\pgfmathparse{(#1/#2)*100}}
 \pgfmathdeclarefunction{restzeit}{2}{\pgfmathparse{(#2*60)-#1}}
 
-%\translation{}{}
+\newcommand{\timerPicture}[1]{ % The only parameter is the time passed in seconds. All other variables have to be defined as commands, lengths, functions and variables as shown above to avoid confusion with the numbering
+	\begin{tikzpicture}
+		% Boundary box
+		\fill[white] (-\boundaryboxx,-\boundaryboxy) rectangle (\boundaryboxx,\boundaryboxy);
+
+		% Centerpoint of the timer
+		\coordinate (O) at (0,0);
+
+		% Events
+		% Start of attendance check 
+		\ifdefined\startAttendanceCheck
+			\pgfmathsetmacro{\startAttendanceCheckAngle}{(int(\startAttendanceCheck)/int(\duration)) * 360 + 90};
+			\coordinate (startAttendanceCheckInner) at ($(O) + (\startAttendanceCheckAngle:\outerradius)$);
+			\coordinate (startAttendanceCheckOuter) at ($(O) + (\startAttendanceCheckAngle:\eventradius)$);
+			\coordinate (startAttendanceCheckText) at ($(O) + (\startAttendanceCheckAngle:\eventradius) + (-0.3cm,0)$);
+			\pgfmathparse{(int(\startAttendanceCheck)*60)-int(#1)}
+			\ifthenelse{0<\pgfmathresult}{
+				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=lightgray, anchor=north east] {in \stunden{restzeit(#1,\startAttendanceCheck)}h \minuten{restzeit(#1,\startAttendanceCheck)}min};
+			}{
+				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=faured!50, anchor=north east] {\translation{Started}{Gestartet}};
+			}
+		\fi
+
+		% Latest early hand-in
+		\ifdefined\latestEarlyHandIn
+			\pgfmathsetmacro{\latestEarlyHandInAngle}{(int(\latestEarlyHandIn)/int(\duration)) * 360 + 90};
+			\coordinate (latestEarlyHandInInner) at ($(O) + (\latestEarlyHandInAngle:\outerradius)$);
+			\coordinate (latestEarlyHandInOuter) at ($(O) + (\latestEarlyHandInAngle:\eventradius)$);
+			\coordinate (latestEarlyHandInText) at ($(O) + (\latestEarlyHandInAngle:\eventradius) + (0.3cm,0)$);
+			\pgfmathparse{(int(\latestEarlyHandIn)*60)-int(#1)}
+			\ifthenelse{0<\pgfmathresult}{
+				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=lightgray, anchor=north west] {in \stunden{restzeit(#1,\latestEarlyHandIn)}h \minuten{restzeit(#1,\latestEarlyHandIn)}min};
+			}{
+				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=faured!50, anchor=north west] {\translation{No longer possible}{Nicht mehr möglich}};
+			}
+		\fi
+
+		% Shadow circle around the timer
+		\fill[white] (O) circle (\shadowradius);
+
+		% Timer
+		\fill[faugray!30] (O) circle (\outerradius);
+		\pgfmathparse{(\duration*60)-#1}
+		\ifthenelse{900<\pgfmathresult}{\fill[faucyan!50] (O) -- (0, \outerradius)}{\ifthenelse{60<\pgfmathresult}{\fill[fauorange!50] (O) -- (0, \outerradius)}{\fill[faured!50] (O) -- (0, \outerradius)}}
+		arc (90:90-3.6*prozent(restzeit(#1,\duration),\duration*60):\outerradius) -- (O);
+		\fill[white] (O) circle (\innerradius);
+
+		\ifthenelse{0<\pgfmathresult}{
+			% There is still time left
+			\node[text width=3cm,align=center] at (0,0.5) {\small \textcolor{lightgray}{\translation{Time left:}{Noch:}}};
+			\node[text width=3cm,align=center] at (O) {\LARGE \textcolor{darkgray}{\stunden{restzeit(#1,\duration)}h \minuten{restzeit(#1,\duration)}min}};
+			\node[text width=3cm,align=center] at (0,-0.5) {\large \textcolor{lightgray}{\stunden{\duration*60}h \minuten{\duration*60}min}};
+		}{
+			% Time is up
+			\node[text width=3cm,align=center] at (O) {\LARGE \textcolor{darkgray}{\translation{Time \\elapsed}{Zeit \\abgelaufen}}};
+		}
+
+		% Text below the timer (explanation of the controls)
+		\node[font=\small] at (0,-2.4) {\textcolor{lightgray}{\translation{Controls:}{Steuerung:}}};
+		\node[font=\tiny] at (0,-2.7) {\textcolor{lightgray}{\translation{(Timer starts automatically. Use controls only if issues arise.)}{(Timer startet automatisch. Bedienelemente nur bei Problemen verwenden.)}}};
+	\end{tikzpicture}
+
+}
 
 \begin{frame}{\translation{Then let's start ...}{Dann los ...}}
 	\begin{center}
-		\begin{animateinline}[controls={play, stop, step}, autoplay, poster=first]{0.01666667}  
+		\begin{animateinline}[controls={play, stop, step}, autoplay, poster=first]{0.01666667}
 			\multiframe{\duration}{n=0+60}{
-				\begin{tikzpicture}
-					\fill[white] (-\boundarybox,-\boundarybox) rectangle (\boundarybox,\boundarybox);
-					\fill[faugray!30] (0,0) circle (\outerradius);
-					\pgfmathparse{(\duration*60)-\n}
-					\ifthenelse{900<\pgfmathresult}{\fill[faucyan!50] (0,0) -- (0, \outerradius)}{\ifthenelse{60<\pgfmathresult}{\fill[fauorange!50] (0,0) -- (0, \outerradius)}{\fill[faured!50] (0,0) -- (0, \outerradius)}}
-					arc (90:90-3.6*prozent(restzeit(\n,\duration),\duration*60):\outerradius) -- (0,0);
-					\fill[white] (0,0) circle (\innerradius);
-					\node[text width=3cm,align=center] at (0,0.5) {\small \textcolor{lightgray}{\translation{Time left:}{Noch:}}};
-					\node[text width=3cm,align=center] at (0,0) {\LARGE \textcolor{darkgray}{\stunden{restzeit(\n,\duration)}h \minuten{restzeit(\n,\duration)}min}};
-					\node[text width=3cm,align=center] at (0,-0.5) {\large \textcolor{lightgray}{\stunden{\duration*60}h \minuten{\duration*60}min}};
-					\node at (0,-2.5) {\textcolor{lightgray}{\translation{Controls:}{Steuerung:}}};
-				\end{tikzpicture}
+				\timerPicture{\n}
 			}
 			\newframe[1]
-			\begin{tikzpicture}
-				\fill[white] (-\boundarybox,-\boundarybox) rectangle (\boundarybox,\boundarybox);
-				\fill[faugray!30] (0,0) circle (\outerradius);
-				\fill[faured!30] (0,0) -- (0, \outerradius)
-				arc (90:90-3.6*100:\outerradius) -- (0,0);
-				\fill[white] (0,0) circle (\innerradius);
-				\node[text width=3cm,align=center] at (0,0) {\LARGE \textcolor{darkgray}{\translation{Time \\elapsed}{Zeit \\abgelaufen}}};
-				\node at (0,-2.5) {\textcolor{lightgray}{\translation{Controls:}{Steuerung:}}};
-			\end{tikzpicture}
+			\timerPicture{\duration*60}
 		\end{animateinline}
 	\end{center}
 \end{frame}

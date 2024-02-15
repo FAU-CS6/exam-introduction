@@ -3,6 +3,8 @@
 % Settings
 \def\exam{EDB}
 \def\duration{90} % Set the duration of the exam in minutes
+\def\startAttendanceCheck{5} % Set the time for the start of the attendance check in minutes after the start of the exam (should always be in between 0 and \duration/2). If not specified, there will no marker on the timer for the attendance check.
+\def\latestEarlyHandIn{75} % Set the latest time for the early hand in in minutes after the start of the exam (should always be in between \duration/2 and \duration). If not specified, there will no marker on the timer for the latest time of early hand in.
 \def\pages{?} % Set the number of pages of the exam before using
 %\def\cheatsheetAllowed{1} % Comment in if a cheat sheet is allowed
 % Set to 1 is only one-side of a DIN A4 paper is allowed to be used, 
