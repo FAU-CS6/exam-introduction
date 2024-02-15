@@ -211,12 +211,18 @@
 \setlength{\boundaryboxy}{2.7cm}
 
 % Functions
-\newcommand{\stunden}[1]{\pgfmathparse{(int(floor(#1/3600)))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
-\newcommand{\minuten}[1]{\pgfmathparse{(int(floor((#1/60)-(floor(#1/3600)*60))))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
-\newcommand{\sekunden}[1]{\pgfmathparse{(int(floor(#1-(floor(#1/3600)*3600)-(floor((#1/60)-(floor(#1/3600)*60))*60))))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
+\newcommand{\hours}[1]{\pgfmathparse{(int(floor(#1/3600)))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
+\newcommand{\minutes}[1]{\pgfmathparse{(int(floor((#1/60)-(floor(#1/3600)*60))))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
+\newcommand{\seconds}[1]{\pgfmathparse{(int(floor(#1-(floor(#1/3600)*3600)-(floor((#1/60)-(floor(#1/3600)*60))*60))))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
 
-\pgfmathdeclarefunction{prozent}{2}{\pgfmathparse{(#1/#2)*100}}
-\pgfmathdeclarefunction{restzeit}{2}{\pgfmathparse{(#2*60)-#1}}
+\pgfmathdeclarefunction{percent}{2}{\pgfmathparse{(#1/#2)*100}}
+\pgfmathdeclarefunction{remainingTime}{2}{\pgfmathparse{(#2*60)-#1}}
+
+% Macros
+\pgfmathsetmacro{\durationMinusTwo}{int(\duration-2)}
+\pgfmathsetmacro{\durationMinusSix}{int(\duration-6)}
+\pgfmathsetmacro{\durationMinusOneInSeconds}{int((\duration-1)*60)}
+\pgfmathsetmacro{\durationMinusFiveInSeconds}{int((\duration-5)*60)}
 
 \newcommand{\timerPicture}[1]{ % The only parameter is the time passed in seconds. All other variables have to be defined as commands, lengths, functions and variables as shown above to avoid confusion with the numbering
 	\begin{tikzpicture}
@@ -235,7 +241,7 @@
 			\coordinate (startAttendanceCheckText) at ($(O) + (\startAttendanceCheckAngle:\eventradius) + (-0.3cm,0)$);
 			\pgfmathparse{(int(\startAttendanceCheck)*60)-int(#1)}
 			\ifthenelse{0<\pgfmathresult}{
-				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=lightgray, anchor=north east] {in \stunden{restzeit(#1,\startAttendanceCheck)}h \minuten{restzeit(#1,\startAttendanceCheck)}min};
+				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=lightgray, anchor=north east] {in \hours{remainingTime(#1,\startAttendanceCheck)}h \minutes{remainingTime(#1,\startAttendanceCheck)}min};
 			}{
 				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=faured!50, anchor=north east] {\translation{Started}{Gestartet}};
 			}
@@ -249,7 +255,7 @@
 			\coordinate (latestEarlyHandInText) at ($(O) + (\latestEarlyHandInAngle:\eventradius) + (0.3cm,0)$);
 			\pgfmathparse{(int(\latestEarlyHandIn)*60)-int(#1)}
 			\ifthenelse{0<\pgfmathresult}{
-				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=lightgray, anchor=north west] {in \stunden{restzeit(#1,\latestEarlyHandIn)}h \minuten{restzeit(#1,\latestEarlyHandIn)}min};
+				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=lightgray, anchor=north west] {in \hours{remainingTime(#1,\latestEarlyHandIn)}h \minutes{remainingTime(#1,\latestEarlyHandIn)}min};
 			}{
 				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=faured!50, anchor=north west] {\translation{No longer possible}{Nicht mehr möglich}};
 			}
@@ -261,35 +267,55 @@
 		% Timer
 		\fill[faugray!30] (O) circle (\outerradius);
 		\pgfmathparse{(\duration*60)-#1}
-		\ifthenelse{900<\pgfmathresult}{\fill[faucyan!50] (O) -- (0, \outerradius)}{\ifthenelse{60<\pgfmathresult}{\fill[fauorange!50] (O) -- (0, \outerradius)}{\fill[faured!50] (O) -- (0, \outerradius)}}
-		arc (90:90-3.6*prozent(restzeit(#1,\duration),\duration*60):\outerradius) -- (O);
+		\ifthenelse{0<\pgfmathresult}{
+			% There is still time left
+			\ifthenelse{300<\pgfmathresult}{\fill[faucyan!50] (O) -- (0, \outerradius)}{\ifthenelse{60<\pgfmathresult}{\fill[fauorange!50] (O) -- (0, \outerradius)}{\fill[faured!50] (O) -- (0, \outerradius)}}
+			arc (90:90-3.6*percent(remainingTime(#1,\duration),\duration*60):\outerradius) -- (O);
+		}{
+			% Time is up
+			\fill[faured!30] (0,0) -- (0, \outerradius)
+			arc (90:90-3.6*100:\outerradius) -- (0,0);
+		}
 		\fill[white] (O) circle (\innerradius);
 
 		\ifthenelse{0<\pgfmathresult}{
 			% There is still time left
-			\node[text width=3cm,align=center] at (0,0.5) {\small \textcolor{lightgray}{\translation{Time left:}{Noch:}}};
-			\node[text width=3cm,align=center] at (O) {\LARGE \textcolor{darkgray}{\stunden{restzeit(#1,\duration)}h \minuten{restzeit(#1,\duration)}min}};
-			\node[text width=3cm,align=center] at (0,-0.5) {\large \textcolor{lightgray}{\stunden{\duration*60}h \minuten{\duration*60}min}};
+			\node[text width=3cm,align=center,font=\small,text=lightgray] at (0,0.45) {\translation{Time left:}{Noch:}};
+			\node[text width=3cm,align=center,font=\Large,text=darkgray] at (O) {
+				\hours{remainingTime(#1,\duration)}h \minutes{remainingTime(#1,\duration)}min
+				\ifthenelse{60>#1}{\small{\seconds{remainingTime(#1,\duration)}s}
+				}{\ifthenelse{\durationMinusFiveInSeconds<#1}{\small{\seconds{remainingTime(#1,\duration)}s}}{}}
+			};
+			\node[text width=3cm,align=center,font=\large,text=lightgray] at (0,-0.45) {
+				\hours{\duration*60}h \minutes{\duration*60}min
+			};
 		}{
 			% Time is up
-			\node[text width=3cm,align=center] at (O) {\LARGE \textcolor{darkgray}{\translation{Time \\elapsed}{Zeit \\abgelaufen}}};
+			\node[text width=3cm,align=center,font=\LARGE,text=darkgray] at (O) {\translation{Time \\elapsed}{Zeit \\abgelaufen}};
 		}
 
 		% Text below the timer (explanation of the controls)
-		\node[font=\small] at (0,-2.4) {\textcolor{lightgray}{\translation{Controls:}{Steuerung:}}};
-		\node[font=\tiny] at (0,-2.7) {\textcolor{lightgray}{\translation{(Timer starts automatically. Use controls only if issues arise.)}{(Timer startet automatisch. Bedienelemente nur bei Problemen verwenden.)}}};
+		\node[font=\tiny,text=lightgray] at (0, -2.2) {\translation{Timer starts automatically.}{Timer startet automatisch.}};
+		\node[font=\tiny,text=lightgray] at (0, -2.45) {\translation{Is updated every second in the first and last five minutes of the exam and every minute for the rest of the time.}{Wird in der ersten und letzten fünf Minuten der Klausur jede Sekunde aktualisiert und für den Rest der Zeit jede Minute.}};
+		%\node[font=\footnotesize,text=lightgray] at (0,-2.8) {\translation{Controls:}{Steuerung:}};
 	\end{tikzpicture}
-
 }
 
 \begin{frame}{\translation{Then let's start ...}{Dann los ...}}
 	\begin{center}
-		\begin{animateinline}[controls={play, stop, step}, autoplay, poster=first]{0.01666667}
-			\multiframe{\duration}{n=0+60}{
+		\begin{animateinline}[controls={play, stop, step}, buttonsize=1em, autoplay, poster=first]{1}
+			\multiframe{60}{n=0+1}{
+				\timerPicture{\n}
+			}
+			% One Frame per Minute in FPS is 1/60. 
+			\newframe[0.0166666666666667]
+			\multiframe{\durationMinusSix}{n=60+60}{
 				\timerPicture{\n}
 			}
 			\newframe[1]
-			\timerPicture{\duration*60}
+			\multiframe{301}{n=\durationMinusFiveInSeconds+1}{
+				\timerPicture{\n}
+			}
 		\end{animateinline}
 	\end{center}
 \end{frame}
