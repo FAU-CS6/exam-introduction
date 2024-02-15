@@ -1,7 +1,7 @@
 \begin{frame}{\translation{Welcome to the \exam\ exam}{Willkommen zur \exam\ Klausur}}
 	\begin{itemize}
-		\item \translation{Fill the room from \textbf{front to back}}{Füllen Sie den Raum von \textbf{vorne nach hinten}}
-		\item \translation{Keep at least \textbf{1m distance} to the person sitting next to you}{Halten Sie mindestens \textbf{1m Abstand} zum nächsten Sitznachbarn}
+		\item \translation{\textbf{Listen to instructions} from the examination team}{Hören Sie auf \textbf{Anweisungen} des Klausurpersonals}
+		\item \translation{Turn off \textbf{electronic devices} like smartphones}{Schalten Sie Ihre \textbf{elektronischen Geräte} aus}
 		\item \translation{\textbf{Prepare} your seating area:}{\textbf{Bereiten} Sie Ihren Tisch vor:}
 		      \begin{columns}[t]
 			      \begin{column}{0.25\columnwidth}
@@ -39,7 +39,7 @@
 	\end{itemize}
 \end{frame}
 
-\section{\translation{Does everyone feel healthy?}{Fühlt sich jeder fit genug für die Klausur?}}
+\section{\translation{Informations}{Informationen}}
 
 \begin{frame}{\translation{General information}{Allgemeine Informationen}}
 	\begin{itemize}
@@ -144,7 +144,7 @@
 	\end{columns}
 \end{frame}
 
-\section{\translation{Any further questions?}{Gibt es Unklarheiten?}}
+\section{\translation{Distribution}{Verteilung}}
 
 \begin{frame}{\translation{Distribution of the Exam}{Verteilung der Klausur}}
 	\begin{itemize}
@@ -194,7 +194,7 @@
 
 \end{frame}
 
-\section{\translation{Is everyone ready?}{Ist jeder bereit?}}
+\section{\translation{Start}{Start}}
 
 % Lengths
 \newlength{\eventradius}
@@ -319,3 +319,57 @@
 		\end{animateinline}
 	\end{center}
 \end{frame}
+
+\section{\translation{Collection}{Einsammeln}}
+
+\begin{frame}{\translation{Collection of the exams}{Einsammeln der Klausuren}}
+	\begin{itemize}
+		\item \translation{We will now \textbf{collect} the exam}{Wir \textbf{sammeln} nun die Klausurexemplare \textbf{ein}}
+		      \ifdefined\cheatsheetAllowed
+		\item \translation{We \textbf{also} collect the \textbf{cheat sheets}}{Wir sammeln \textbf{auch} die \textbf{Cheat Sheets} ein}
+		      \else
+		      % Do nothing (\else is necessary, otherwise MiKTeX throws an "! Extra \fi" error message)
+		      \fi
+	\end{itemize}
+
+	\begin{center}
+		\begin{columns}[t]
+			\begin{column}{0.91\columnwidth}
+				\begin{alertblock}{\translation{Remain seated and silent until we have collected all the exams!}{Bleiben Sie ruhig sitzen bis wir alle Klausuren eingesammelt haben!}}
+					\begin{itemize}
+						\item \translation{We collect \textbf{all} the exams and have to count them \textbf{before} you are allowed to stand up}{Wir sammeln \textbf{alle} Klausuren ein und müssen diese zählen, \textbf{bevor} Sie aufstehen dürfen}
+						\item \translation{\textbf{Wait} until we give you permission to get up}{\textbf{Warten Sie} bis wir Ihnen erlauben aufzustehen}
+					\end{itemize}
+				\end{alertblock}
+			\end{column}
+		\end{columns}
+	\end{center}
+\end{frame}
+
+\ifdefined\examInspectionLink
+	\section{\translation{Exam Inspection}{Klausureinsicht}}
+
+	\begin{frame}{\translation{Exam Inspection}{Klausureinsicht}}
+		\begin{columns}[t]
+			\begin{column}{0.59\columnwidth}
+				\vspace{-0.4cm}
+				\begin{itemize}
+					\item \translation{We \textbf{offer} an online exam inspection for \exam}{Wir \textbf{bieten} eine Online-Klausureinsicht für \exam\ {an}}
+					\item \translation{You can \textbf{register} at \\\url{\examInspectionLink}\\ (\textbf{QR-Code} on the right side)}{Sie können sich unter \\\url{\examInspectionLink}\\ \textbf{anmelden} (\textbf{QR-Code} auf der rechten Seite)}
+					\item \translation{If you \textbf{register before} the announcement of the grades, you will \textbf{gain immediate} access to your copy directly following the announcement.}{Wenn Sie sich \textbf{vor der Bekanntgabe} der Noten registrieren lassen, erhalten Sie \textbf{unmittelbar nach} der Bekanntgabe Zugang zu Ihrer Klausur.}
+					\item \translation{You also have the opportunity to join for \textbf{about two weeks after} the announcement, but in this case, you will have to \textbf{wait longer} for the upload.}{Sie haben auch die Möglichkeit, für \textbf{etwa zwei Wochen} nach der Ankündigung beizutreten, aber in diesem Fall müssen Sie \textbf{länger} auf den Upload \textbf{warten}.}
+					\item \translation{For more information, visit the \textbf{StudOn} course.}{Für mehr Informationen besuchen Sie den \textbf{StudOn} Kurs.}
+				\end{itemize}
+			\end{column}
+			\begin{column}{0.35\columnwidth}
+				\vspace{-0.2cm}
+				\begin{center}
+					\qrcode[height=4cm]{\examInspectionLink}
+				\end{center}
+			\end{column}
+		\end{columns}
+
+	\end{frame}
+\else
+	% Do nothing (\else is necessary, otherwise MiKTeX throws an "! Extra \fi" error message)
+\fi
