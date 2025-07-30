@@ -22,6 +22,10 @@ done
 echo "presentations:" >> .presentations-ci.yml
 echo "  stage: upload-pdfs" >> .presentations-ci.yml
 echo "  image: alpine" >> .presentations-ci.yml
+echo "  before_script:" >> .presentations-ci.yml
+echo "    - echo '🔍 Gesamte Artefaktgröße:'" >> .presentations-ci.yml
+echo "    - du -ch exam-introduction*/*.pdf *.pdf | sort -hr | tail -n 10" >> .presentations-ci.yml
+echo "    - echo '🔚'" >> .presentations-ci.yml
 echo "  script:" >> .presentations-ci.yml
 echo "    - ls " >> .presentations-ci.yml
 echo "    - ls exam-introduction*/" >> .presentations-ci.yml
