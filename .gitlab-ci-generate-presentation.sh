@@ -25,7 +25,7 @@ mkdir presentations
 latexmk -pdf -interaction=nonstopmode "${base_name_without_tex}.tex" 
 mv "${base_name_without_tex}.pdf" "${base_name_without_tex}-demo.pdf"
 mkdir "${base_name_without_tex}"
-for i in {10..30}
+for i in {5..30}
 do
   cp "${base_name}" "${base_name_without_tex}-${i}-pages.tex"
   sed -i -e "s/pages{.*}/pages{${i}}/g" "${base_name_without_tex}-${i}-pages.tex"
