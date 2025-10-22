@@ -1,42 +1,71 @@
 \begin{frame}{\translation{Welcome to the \exam\ exam}{Willkommen zur \exam\ Klausur}}
-	\begin{itemize}
-		\item \translation{\textbf{Listen to instructions} from the examination team}{Hören Sie auf \textbf{Anweisungen} des Klausurpersonals}
-		\item \translation{Turn off \textbf{electronic devices} like smartphones}{Schalten Sie Ihre \textbf{elektronischen Geräte} aus}
-		\item \translation{\textbf{Prepare} your seating area:}{\textbf{Bereiten} Sie Ihren Tisch vor:}
-		      \begin{columns}[t]
-			      \begin{column}{0.25\columnwidth}
-				      \begin{exampleblock}{\centering\translation{Necessary \\ \small to have at your seat}{Benötigt \\ \small am eigenen Tisch}}
-					      \begin{itemize}
-						      \item \translation{Pens}{Stifte}
-						      \item \translation{Correction tape}{Korrekturroller}
-						      \item \translation{Photo ID}{Lichtbildausweis}
-					      \end{itemize}
-				      \end{exampleblock}
-			      \end{column}
-			      \begin{column}{0.25\columnwidth}
-				      \begin{block}{\centering\translation{Permitted \\ \small to have at your seat}{Erlaubt \\ \small am eigenen Tisch}}
-					      \begin{itemize}
-						      \ifdefined\cheatsheetAllowed
-						      \item \translation{Cheat sheet}{Cheat sheet}
-						            \else
-						            % Do nothing (\else is necessary, otherwise MiKTeX throws an "! Extra \fi" error message)
-						            \fi
-						      \item \translation{Writing utensils}{Schreibmaterial}
-						      \item \translation{Food}{Essen}
-						      \item \translation{Drinks}{Trinken}
-					      \end{itemize}
-				      \end{block}
-			      \end{column}
-			      \begin{column}{0.25\columnwidth}
-				      \begin{alertblock}{\centering\translation{Forbidden \\ \small to have at your seat}{Verboten \\ \small am eigenen Tisch}}
-					      \begin{itemize}
-						      \item \translation{Electronic devices \\ (incl. Smartwatches, Earbuds, etc.)}{Elektronische Geräte \\ (inkl. Smartwatches, Kopfhörer, etc.)}
-						      \item \translation{Jackets/Bags/Other items}{Jacken/Taschen/ sonstige Gegenstände}
-					      \end{itemize}
-				      \end{alertblock}
-			      \end{column}
-		      \end{columns}
-	\end{itemize}
+	\vspace*{-0.35cm}
+	\begin{columns}[t]
+		\begin{column}{0.6\columnwidth}
+			\begin{itemize}
+				\item \translation{\textbf{Listen to instructions} from the examination team}{Hören Sie auf \textbf{Anweisungen} des Klausurpersonals}
+				\item \translation{Turn off \textbf{electronic devices} like smartphones}{Schalten Sie Ihre \textbf{elektronischen Geräte} aus}
+				\item \translation{\textbf{Prepare} your seating area:}{\textbf{Bereiten} Sie Ihren Tisch vor:}
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.3\columnwidth}
+
+			\ifdefined\cheatsheetAllowed
+				\centering
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/smartphone.png}
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/calculator.png}
+
+				\vspace{0.1cm}
+
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/smartwatch-headphone.png}
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/bags-jacket.png}
+			\else
+				\centering
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/smartphone.png}
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/calculator.png}
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/smartwatch-headphone.png}
+
+				\vspace{0.1cm}
+
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/bags-jacket.png}
+				\includegraphics[width=0.3\linewidth]{images/not-allowed/cheat-sheets.png}
+			\fi
+		\end{column}
+	\end{columns}
+	\vspace*{0.05cm}
+	\begin{columns}[t]
+		\begin{column}{0.25\columnwidth}
+			\begin{exampleblock}{\centering\translation{Necessary \\ \small to have at your seat}{Benötigt \\ \small am eigenen Tisch}}
+				\begin{itemize}
+					\item \translation{Pens}{Stifte}
+					\item \translation{Correction tape}{Korrekturroller}
+					\item \translation{Photo ID}{Lichtbildausweis}
+				\end{itemize}
+			\end{exampleblock}
+		\end{column}
+		\begin{column}{0.25\columnwidth}
+			\begin{block}{\centering\translation{Permitted \\ \small to have at your seat}{Erlaubt \\ \small am eigenen Tisch}}
+				\begin{itemize}
+					\ifdefined\cheatsheetAllowed
+					\item \translation{Cheat sheet}{Cheat sheet}
+					      \else
+					      % Do nothing (\else is necessary, otherwise MiKTeX throws an "! Extra \fi" error message)
+					      \fi
+					\item \translation{Writing utensils}{Schreibmaterial}
+					\item \translation{Food}{Essen}
+					\item \translation{Drinks}{Trinken}
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\begin{column}{0.25\columnwidth}
+			\begin{alertblock}{\centering\translation{Forbidden \\ \small to have at your seat}{Verboten \\ \small am eigenen Tisch}}
+				\begin{itemize}
+					\item \translation{Electronic devices \\ (incl. Smartwatches, Earbuds, etc.)}{Elektronische Geräte \\ (inkl. Smartwatches, Kopfhörer, etc.)}
+					\item \translation{Jackets/Bags/Other items}{Jacken/Taschen/ sonstige Gegenstände}
+				\end{itemize}
+			\end{alertblock}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \section{\translation{Check List}{Checkliste}}
@@ -64,7 +93,30 @@
 		\end{column}
 		\begin{column}{0.4\textwidth}
 			\begin{center}
-				\includegraphics[width=5cm]{images/ill.png}
+				\ifdefined\cheatsheetAllowed
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/smartphone.png}
+
+					\vspace{0.1cm}
+
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/calculator.png}
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/smartwatch-headphone.png}
+
+					\vspace{0.1cm}
+
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/bags-jacket.png}
+				\else
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/smartphone.png}
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/calculator.png}
+
+					\vspace{0.1cm}
+
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/smartwatch-headphone.png}
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/bags-jacket.png}
+
+					\vspace{0.1cm}
+
+					\includegraphics[width=0.275\linewidth]{images/not-allowed/cheat-sheets.png}
+				\fi
 			\end{center}
 		\end{column}
 	\end{columns}
@@ -177,17 +229,49 @@
 
 \begin{frame}{\translation{Don't Cheat!}{Nicht schummeln!}}
 
-	\begin{itemize}
-		\item \translation{We \textbf{consider} ...}{Wir \textbf{werten} ...}
-		      \begin{itemize}
-			      \item \translation{... forbidden items at your desk (regardless of whether you used them or not) ...}{... verbotene Gegenstände am eigenen Tisch (egal ob aktiv genutzt oder nicht) ...}
-			      \item \translation{... working on the exam before it starts/after the time is up ...}{... Arbeiten an der Klausur vor Beginn/nach Ende der Bearbeitungszeit ...}
-			      \item \translation{... glances at the exams of other students ...}{... Blicke auf die Klausur anderer Studenten ...}
-			      \item \translation{... communicating (with each other) ...}{... kommunizieren (miteinander) ...}
-			      \item \translation{... manipulating grading fields ...}{... Manipulation von Bewertungsfeldern ...}
-		      \end{itemize}
-		      \translation{... to be an attempt at \textbf{deception}.}{... als \textbf{Täuschungsversuch}.}
-	\end{itemize}
+	\begin{columns}[T]
+		\begin{column}{0.65\textwidth}
+			\begin{itemize}
+				\item \translation{We \textbf{consider} ...}{Wir \textbf{werten} ...}
+				      \begin{itemize}
+					      \item \translation{... forbidden items at your desk \\ (regardless of whether you used them or not) ...}{... verbotene Gegenstände am eigenen Tisch \\ (egal ob aktiv genutzt oder nicht) ...}
+					      \item \translation{... working on the exam before it starts/after the time is up ...}{... Arbeiten an der Klausur vor Beginn/nach Ende der Bearbeitungszeit ...}
+					      \item \translation{... glances at the exams of other students ...}{... Blicke auf die Klausur anderer Studenten ...}
+					      \item \translation{... communicating (with each other) ...}{... kommunizieren (miteinander) ...}
+					      \item \translation{... manipulating grading fields ...}{... Manipulation von Bewertungsfeldern ...}
+				      \end{itemize}
+				      \translation{... to be an attempt at \textbf{deception}.}{... als \textbf{Täuschungsversuch}.}
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\begin{center}
+				\ifdefined\cheatsheetAllowed
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/smartphone.png}
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/calculator.png}
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/smartwatch-headphone.png}
+
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/bags-jacket.png}
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/writing-outside-of-time.png}
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/glancing-at-other-exams.png}
+
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/speaking.png}
+					\includegraphics[width=0.25\linewidth]{images/not-allowed/writing-in-correction-area.png}
+				\else
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/smartphone.png}
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/calculator.png}
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/smartwatch-headphone.png}
+
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/bags-jacket.png}
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/cheat-sheets.png}
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/writing-outside-of-time.png}
+
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/glancing-at-other-exams.png}
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/speaking.png}
+					\includegraphics[width=0.2\linewidth]{images/not-allowed/writing-in-correction-area.png}
+				\fi
+			\end{center}
+		\end{column}
+	\end{columns}
 
 	\vspace*{0.5cm}
 
