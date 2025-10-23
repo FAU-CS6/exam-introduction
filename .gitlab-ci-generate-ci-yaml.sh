@@ -24,7 +24,8 @@ echo "  stage: upload-pdfs" >> .presentations-ci.yml
 echo "  image: alpine" >> .presentations-ci.yml
 echo "  before_script:" >> .presentations-ci.yml
 echo "    - echo '🔍 Total artifact size:'" >> .presentations-ci.yml
-echo "    - du -ch exam-introduction*/*.pdf *.pdf | sort -hr | tail -n 10" >> .presentations-ci.yml
+echo "    - du -sh *" >> .presentations-ci.yml
+echo "    - du -sh exam-introduction*/ " >> .presentations-ci.yml
 echo "    - echo '🔚'" >> .presentations-ci.yml
 echo "  script:" >> .presentations-ci.yml
 echo "    - ls " >> .presentations-ci.yml
