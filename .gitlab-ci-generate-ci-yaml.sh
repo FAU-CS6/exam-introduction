@@ -30,4 +30,5 @@ echo "    name: \"presentations\"" >> .presentations-ci.yml
 echo "    paths:" >> .presentations-ci.yml
 echo "      - \"*.pdf\"" >> .presentations-ci.yml
 echo "      - \"exam-introduction*/*.pdf\"" >> .presentations-ci.yml
+echo "    expire_in: 2 months" >> .presentations-ci.yml
 
