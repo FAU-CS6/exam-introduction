@@ -285,3 +285,8 @@ TSWLatexianTemp*
 
 # MacOS files
 .DS_Store
+
+# Exclude fau-res pdfs
+!fau-res/fau-logo.pdf
+!fau-res/tf/fau-logo.pdf
+!fau-res/tf/fau-logo-white.pdf
