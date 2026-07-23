@@ -503,14 +503,19 @@
 		($(timerEventMarkerInnerEdge)!0.75!(timerEventMarkerOuterEdge)$);
 }
 
-% Convert an accommodation event time into its ring angle and switch the
-% marker from cyan to gray as soon as the event has been reached.
+% Convert an accommodation event time into its ring angle. Upcoming events are
+% cyan, reached events are gray, and all markers turn subtly red once the
+% complete timer has elapsed.
 \newcommand{\accommodationTimerEventMarker}[2]{
 	\pgfmathsetmacro{\timerEventMarkerAngle}{\timerTrackStartAngle+(#2/\timerTotalSeconds)*\timerTrackSweepAngle}
-	\ifnum#1<#2\relax
-		\def\timerEventMarkerColor{faucyan!30}
+	\ifnum#1<\timerTotalSeconds\relax
+		\ifnum#1<#2\relax
+			\def\timerEventMarkerColor{faucyan!30}
+		\else
+			\def\timerEventMarkerColor{faugray!45}
+		\fi
 	\else
-		\def\timerEventMarkerColor{faugray!45}
+		\def\timerEventMarkerColor{faured!45}
 	\fi
 	\timerRingEventMarkerAtAngle{\timerEventMarkerAngle}{\timerEventMarkerColor}
 }
@@ -577,18 +582,26 @@
 		\fill[white] (O) circle (\innerradius);
 		\timerTrackOrientation{\classicTimerBoundaryAngle}{#1}
 		\ifdefined\startAttendanceCheck
-			\ifnum\attendanceRemaining>0\relax
-				\def\timerEventMarkerColor{faucyan!30}
+			\ifnum\classicTimerRemaining>0\relax
+				\ifnum\attendanceRemaining>0\relax
+					\def\timerEventMarkerColor{faucyan!30}
+				\else
+					\def\timerEventMarkerColor{faugray!45}
+				\fi
 			\else
-				\def\timerEventMarkerColor{faugray!45}
+				\def\timerEventMarkerColor{faured!45}
 			\fi
 			\timerRingEventMarkerAtAngle{\attendanceAngle}{\timerEventMarkerColor}
 		\fi
 		\ifdefined\latestEarlyHandIn
-			\ifnum\earlyHandInRemaining>0\relax
-				\def\timerEventMarkerColor{faucyan!30}
+			\ifnum\classicTimerRemaining>0\relax
+				\ifnum\earlyHandInRemaining>0\relax
+					\def\timerEventMarkerColor{faucyan!30}
+				\else
+					\def\timerEventMarkerColor{faugray!45}
+				\fi
 			\else
-				\def\timerEventMarkerColor{faugray!45}
+				\def\timerEventMarkerColor{faured!45}
 			\fi
 			\timerRingEventMarkerAtAngle{\earlyHandInAngle}{\timerEventMarkerColor}
 		\fi
@@ -738,6 +751,7 @@
 	\def\timerPauseTooltip{Timer pausieren}
 	\def\timerResumeTooltip{Timer fortsetzen}
 	\def\timerCorrectionTooltip{Abgelaufene Zeit korrigieren}
+	\def\timerResetTooltip{Timer zuruecksetzen und neu starten}
 \else
 	\def\timerCorrectionQuestion{Enter the elapsed time as h:mm:ss. Maximum:}
 	\def\timerCorrectionTitle{Correct timer}
@@ -745,6 +759,7 @@
 	\def\timerPauseTooltip{Pause timer}
 	\def\timerResumeTooltip{Resume timer}
 	\def\timerCorrectionTooltip{Correct elapsed time}
+	\def\timerResetTooltip{Reset and restart timer}
 \fi
 
 % The animate package normally advances exactly one frame per Acrobat timer
@@ -752,6 +767,12 @@
 % systems. Keep animate's controls and frame-duration metadata, but anchor
 % forward playback to elapsed wall-clock time. A separate one-second heartbeat
 % checks the clock even when the next visual frame is 30 or 60 seconds away.
+%
+% Acrobat may open the following page in the background before it is actually
+% shown. animate normally attaches the same autoplay action to PageOpen and
+% PageVisible, which can start the timer during that preloading. Build separate
+% action streams below: PageOpen only initializes the animation, while
+% PageVisible initializes it if necessary and then starts playback.
 \makeatletter
 \let\exam@timer@original@animate@jsinit\@anim@@jsinit
 \gdef\@anim@@jsinit#1{%
@@ -819,6 +840,12 @@
 				a#1_playFwd();%
 			}%
 		};%
+		examTimerReset=function(){%
+			a#1_stopFirst();%
+			a#1_wallPausedElapsed=0;%
+			a#1_wallUserPaused=true;%
+			a#1_playFwd();%
+		};%
 		examTimerCorrectElapsed=function(){%
 			var wasPlaying=a#1_playing;%
 			var currentElapsed=wasPlaying?(new Date()).getTime()-a#1_wallStart:(a#1_wallUserPaused?a#1_wallPausedElapsed:a#1_wallTimes[a#1_idx]);%
@@ -863,6 +890,31 @@
 		};%
 	}%
 }
+\gdef\@anim@pojscript#1{%
+	\@anim@streamobj{}{%
+		app.focusRect=false;%
+		\@anim@@jsvardecls{#1}%
+		\@anim@@jsinit{#1}%
+	}%
+	\global\let\@anim@pojscriptobj\@anim@lastobj%
+	\@anim@streamobj{}{%
+		app.focusRect=false;%
+		\@anim@@jsvardecls{#1}%
+		\@anim@@jsinit{#1}%
+		\@anim@@pojscript{#1}%
+	}%
+	\global\let\@anim@pvjscriptobj\@anim@lastobj%
+}
+\patchcmd{\@anim@animwidget}
+	{/PV <</S/JavaScript/JS \@anim@pojscriptobj>>}
+	{/PV <</S/JavaScript/JS \@anim@pvjscriptobj>>}
+	{}
+	{\PackageError{exam-introduction}{Could not separate animate PageVisible action}{The installed animate package is incompatible with the timer initialization patch.}}
+\patchcmd{\@anim@animwidget}
+	{/PV <</S/JavaScript/JS \@anim@pojscriptobj>>}
+	{/PV <</S/JavaScript/JS \@anim@pvjscriptobj>>}
+	{}
+	{\PackageError{exam-introduction}{Could not separate animate PageVisible widget action}{The installed animate package is incompatible with the timer initialization patch.}}
 \makeatother
 
 % Compact custom timer controls. Pause and resume are overlaid widget buttons;
@@ -912,6 +964,14 @@
 		\draw[line width=0.45pt] (0.54,0.25) -- (0.56,0.27) -- (0.58,0.29);
 	}%
 }
+\newcommand{\timerResetButtonIcon}{%
+	\timerControlButtonFrame{%
+		% Leave a visible gap at the top and point tangentially across it. Keeping
+		% the arrowhead outside the circle prevents the icon from reading as "G".
+		\draw[line width=0.65pt] (0.39,0.73) arc (115:425:0.25);
+		\fill (0.50,0.78) -- (0.58,0.68) -- (0.63,0.78) -- cycle;
+	}%
+}
 \newcommand{\timerPauseResumeControl}{%
 	\hbox{%
 		\makebox[1em][l]{\rule{0pt}{1em}}%
@@ -926,6 +986,14 @@
 		\makebox[1em][l]{\rule{0pt}{1em}}%
 		\kern-1em%
 		\timerControlWidget{examTimerCorrectionButton}{examTimerCorrectElapsed();}{0}{\timerCorrectionTooltip}{\timerCorrectionButtonIcon}%
+		\kern1em%
+	}%
+}
+\newcommand{\timerResetControl}{%
+	\hbox{%
+		\makebox[1em][l]{\rule{0pt}{1em}}%
+		\kern-1em%
+		\timerControlWidget{examTimerResetButton}{examTimerReset();}{0}{\timerResetTooltip}{\timerResetButtonIcon}%
 		\kern1em%
 	}%
 }
@@ -1011,7 +1079,8 @@
 		\par\vspace{0.08em}
 		\leavevmode
 		\timerPauseResumeControl\hspace{0.16em}%
-		\timerCorrectionControl
+		\timerCorrectionControl\hspace{0.16em}%
+		\timerResetControl
 	\end{center}
 \end{frame}
 
