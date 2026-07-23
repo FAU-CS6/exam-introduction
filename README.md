@@ -55,6 +55,14 @@ It should look like this:
 %
 \def\duration{90}
 
+% Optional: Set comma-separated percentage-based time extensions (maximum five
+% unique values greater than 0 and at most 100). If defined, the timer counts up
+% to the longest extension and replaces attendance/early-hand-in arms with one
+% arm per end time.
+% The values may be given in any order.
+%
+%\def\timeExtensionPercentages{20,25,30,50}
+
 % Comment in if the start of the attendance check should be visible in the timer
 % Set the time for the start of the attendance check in minutes after the start of the exam 
 % (should always be in between 0 and \duration/2). 
@@ -94,5 +102,3 @@ It should look like this:
 % Import the presentation
 \include{src/presentation}
 ```
-
-
