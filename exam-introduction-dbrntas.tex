@@ -12,6 +12,14 @@
 %
 \def\duration{60}
 
+% Optional: Set comma-separated percentage-based time extensions relative to
+% \duration (maximum five unique values greater than 0 and at most 100).
+% If defined, the timer counts up to the longest extended end time and replaces
+% attendance/early-hand-in arms with one arm per end time. Values may be given
+% in any order; for example, 20,25,50 adds +20%, +25%, and +50% end times.
+%
+%\def\timeExtensionPercentages{10,20,25,30}
+
 % Comment in if the start of the attendance check should be visible in the timer
 % Set the time for the start of the attendance check in minutes after the start of the exam 
 % (should always be in between 0 and \duration/2). 

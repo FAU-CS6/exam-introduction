@@ -335,7 +335,7 @@
 
 \section{\translation{Start}{Start}}
 
-% Lengths
+% Timer dimensions
 \newlength{\eventradius}
 \newlength{\outerradius}
 \newlength{\shadowradius}
@@ -349,113 +349,669 @@
 \setlength{\boundaryboxx}{7cm}
 \setlength{\boundaryboxy}{2.7cm}
 
+% Leave a small opening at twelve o'clock so that the beginning and end of the
+% circular time axis remain distinguishable. Time advances counter-clockwise
+% from the stronger start cap to the lighter end cap.
+\def\timerTrackStartAngle{93}
+\def\timerTrackEndAngle{447}
+\def\timerTrackGapEndAngle{87}
+\def\timerTrackSweepAngle{354}
+
 % Functions
 \newcommand{\hours}[1]{\pgfmathparse{(int(floor(#1/3600)))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
 \newcommand{\minutes}[1]{\pgfmathparse{(int(floor((#1/60)-(floor(#1/3600)*60))))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
 \newcommand{\seconds}[1]{\pgfmathparse{(int(floor(#1-(floor(#1/3600)*3600)-(floor((#1/60)-(floor(#1/3600)*60))*60))))/100}\pgfmathprintnumber[skip 0.=true, dec sep={}, fixed, fixed zerofill, precision=2]\pgfmathresult}
+\pgfmathdeclarefunction{remainingTime}{2}{\pgfmathparse{max(#2-#1,0)}}
 
-\pgfmathdeclarefunction{percent}{2}{\pgfmathparse{(#1/#2)*100}}
-\pgfmathdeclarefunction{remainingTime}{2}{\pgfmathparse{(#2*60)-#1}}
+% Cut the track opening and draw restrained orientation cues: fixed start/end
+% caps, the current boundary, and a short arrow following the time direction.
+\newcommand{\timerTrackOrientation}[2]{
+	\pgfmathsetmacro{\timerDirectionArrowStart}{#1+2}
+	\pgfmathsetmacro{\timerDirectionArrowEnd}{#1+9}
+	\fill[white] (O) -- ($(O)+(\timerTrackGapEndAngle:\shadowradius)$)
+		arc (\timerTrackGapEndAngle:\timerTrackStartAngle:\shadowradius) -- cycle;
+	\draw[lightgray,line width=0.22mm]
+		($(O)+(\timerTrackEndAngle:\innerradius)$) -- ($(O)+(\timerTrackEndAngle:\outerradius)$);
+	\draw[faugray,line width=0.35mm]
+		($(O)+(\timerTrackStartAngle:\innerradius)$) -- ($(O)+(\timerTrackStartAngle:\outerradius)$);
+	\draw[faugray,line width=0.32mm]
+		($(O)+(#1:\innerradius)$) -- ($(O)+(#1:\outerradius)$);
+	\ifnum#2<60\relax
+		\draw[->,faugray,line width=0.28mm]
+			($(O)+(\timerDirectionArrowStart:1.76cm)$)
+			arc (\timerDirectionArrowStart:\timerDirectionArrowEnd:1.76cm);
+	\fi
+}
 
-% Macros
-\pgfmathsetmacro{\durationMinusTwo}{int(\duration-2)}
-\pgfmathsetmacro{\durationMinusSix}{int(\duration-6)}
-\pgfmathsetmacro{\durationMinusOneInSeconds}{int((\duration-1)*60)}
-\pgfmathsetmacro{\durationMinusFiveInSeconds}{int((\duration-5)*60)}
+% Prepare and validate the optional comma-separated list of percentage-based
+% extensions. Sorting the values keeps the arms and labels in a stable order.
+\def\timerExtensionPercentagesSorted{}
+\def\timerExtensionCount{0}
+\def\timerMaximumExtension{0}
+\ifdefined\timeExtensionPercentages
+	\ExplSyntaxOn
+	\clist_new:N \l_exam_timer_extensions_clist
+	\tl_new:N \l_exam_timer_previous_extension_tl
+	\cs_new_protected:Npn \exam_timer_prepare_extensions:n #1
+	{
+		\clist_set:Nn \l_exam_timer_extensions_clist {#1}
+		\clist_if_empty:NT \l_exam_timer_extensions_clist
+		{
+			\PackageError{exam-introduction}{The time extension list must not be empty}{Define timeExtensionPercentages as a comma-separated list such as 20,25,50.}
+		}
+		\clist_map_inline:Nn \l_exam_timer_extensions_clist
+		{
+			\fp_compare:nNnF {##1} > {0}
+			{
+				\PackageError{exam-introduction}{Time extensions must be greater than zero}{Remove zero and negative entries from timeExtensionPercentages.}
+			}
+			\fp_compare:nNnT {##1} > {100}
+			{
+				\PackageError{exam-introduction}{Time extensions above 100 percent are not supported}{Use values between 0 and 100 percent to keep the event arms readable.}
+			}
+		}
+		\clist_sort:Nn \l_exam_timer_extensions_clist
+		{
+			\fp_compare:nNnTF {##1} > {##2}
+				{\sort_return_swapped:}
+				{\sort_return_same:}
+		}
+		\tl_clear:N \l_exam_timer_previous_extension_tl
+		\clist_map_inline:Nn \l_exam_timer_extensions_clist
+		{
+			\tl_if_empty:NF \l_exam_timer_previous_extension_tl
+			{
+				\fp_compare:nNnT {##1} = {\l_exam_timer_previous_extension_tl}
+				{
+					\PackageError{exam-introduction}{Duplicate time extensions are not supported}{Remove duplicate entries from timeExtensionPercentages so that event arms do not overlap.}
+				}
+			}
+			\tl_set:Nn \l_exam_timer_previous_extension_tl {##1}
+		}
+		\int_compare:nNnT {\clist_count:N \l_exam_timer_extensions_clist} > {5}
+		{
+			\PackageError{exam-introduction}{At most five time extensions are supported}{Shorten timeExtensionPercentages so that all labels fit without overlap.}
+		}
+		\cs_gset:Npx \timerExtensionPercentagesSorted
+			{\clist_use:Nn \l_exam_timer_extensions_clist {,}}
+		\cs_gset:Npx \timerExtensionCount
+			{\int_eval:n {\clist_count:N \l_exam_timer_extensions_clist}}
+		\cs_gset:Npx \timerMaximumExtension
+			{\clist_item:Nn \l_exam_timer_extensions_clist {\clist_count:N \l_exam_timer_extensions_clist}}
+	}
+	\cs_new_eq:NN \prepareTimerExtensions \exam_timer_prepare_extensions:n
+	\ExplSyntaxOff
+	\expandafter\prepareTimerExtensions\expandafter{\timeExtensionPercentages}
+\fi
 
-\newcommand{\timerPicture}[1]{ % The only parameter is the time passed in seconds. All other variables have to be defined as commands, lengths, functions and variables as shown above to avoid confusion with the numbering
+% Timer duration and event times in seconds. In accommodation mode the largest
+% extension determines the full duration of the ring and animation.
+\pgfmathtruncatemacro{\timerBaseSeconds}{round(\duration*60)}
+\ifdefined\timeExtensionPercentages
+	\pgfmathtruncatemacro{\timerTotalSeconds}{round(\timerBaseSeconds*((100+\timerMaximumExtension)/100))}
+	\edef\timerEventSecondsList{\timerBaseSeconds}
+	\foreach \timerExtension in \timerExtensionPercentagesSorted {
+		\pgfmathtruncatemacro{\timerExtensionSeconds}{round(\timerBaseSeconds*((100+\timerExtension)/100))}
+		\xdef\timerEventSecondsList{\timerEventSecondsList,\timerExtensionSeconds}
+	}
+\else
+	\pgfmathtruncatemacro{\timerTotalSeconds}{\timerBaseSeconds}
+\fi
+
+% Draw an accommodation arm. Parameters: elapsed seconds, target time, label,
+% label x/y positions, bend x position, text anchor side, and category color.
+% Each arm consists of exactly one diagonal segment followed by one horizontal
+% label segment.
+\newcommand{\accommodationTimerEventArm}[8]{
+	\pgfmathsetmacro{\timerEventAngle}{\timerTrackStartAngle+(#2/\timerTotalSeconds)*\timerTrackSweepAngle}
+	\pgfmathtruncatemacro{\timerEventRemaining}{remainingTime(#1,#2)}
+	\coordinate (timerEventInner) at ($(O)+(\timerEventAngle:\outerradius)$);
+	\coordinate (timerEventLabel) at (#4,#5);
+	\coordinate (timerEventBend) at (#6,#5);
+	\def\timerEventColor{#8}
+	\ifnum\timerEventRemaining>0\relax
+		\ifnum\timerEventRemaining<61\relax
+			\def\timerEventTimeColor{fauorange!55}
+		\else
+			\def\timerEventTimeColor{lightgray}
+		\fi
+	\fi
+	\draw[\timerEventColor,line width=0.45mm] (timerEventInner) -- (timerEventBend) -- (timerEventLabel);
+	\node[anchor=south #7,inner ysep=0.5pt,font=\timerEventLabelFont,text=\timerEventColor] at (timerEventLabel) {#3};
+	\ifnum\timerEventRemaining>0\relax
+		\node[anchor=north #7,inner ysep=0.5pt,font=\timerEventTimeFont,text=\timerEventTimeColor] at (timerEventLabel) {
+			\ifTimerDisplaySeconds
+				\translation{in}{noch} \hours{\timerEventRemaining}h \minutes{\timerEventRemaining}min \seconds{\timerEventRemaining}s
+			\else
+				% Round remaining time upwards so that a coarse frame at a half
+				% minute does not make the minute display jump too early.
+				\pgfmathtruncatemacro{\timerEventDisplayRemaining}{ceil(\timerEventRemaining/60)*60}
+				\translation{in}{noch} \hours{\timerEventDisplayRemaining}h \minutes{\timerEventDisplayRemaining}min
+			\fi
+		};
+	\else
+		\node[anchor=north #7,inner ysep=0.5pt,font=\scriptsize,text=faured!50] at (timerEventLabel) {\translation{elapsed}{abgelaufen}};
+	\fi
+}
+
+% Draw a fixed, subtle marker through the centered half of the ring width.
+\newcommand{\timerRingEventMarkerAtAngle}[2]{
+	\coordinate (timerEventMarkerInnerEdge) at ($(O)+(#1:\innerradius)$);
+	\coordinate (timerEventMarkerOuterEdge) at ($(O)+(#1:\outerradius)$);
+	\draw[#2,line width=0.3mm,line cap=round]
+		($(timerEventMarkerInnerEdge)!0.25!(timerEventMarkerOuterEdge)$) --
+		($(timerEventMarkerInnerEdge)!0.75!(timerEventMarkerOuterEdge)$);
+}
+
+% Convert an accommodation event time into its ring angle and switch the
+% marker from cyan to gray as soon as the event has been reached.
+\newcommand{\accommodationTimerEventMarker}[2]{
+	\pgfmathsetmacro{\timerEventMarkerAngle}{\timerTrackStartAngle+(#2/\timerTotalSeconds)*\timerTrackSweepAngle}
+	\ifnum#1<#2\relax
+		\def\timerEventMarkerColor{faucyan!30}
+	\else
+		\def\timerEventMarkerColor{faugray!45}
+	\fi
+	\timerRingEventMarkerAtAngle{\timerEventMarkerAngle}{\timerEventMarkerColor}
+}
+
+% Countdown timer used when no time extension list is configured. This keeps
+% the existing attendance-check and early-hand-in settings fully compatible.
+\newcommand{\classicTimerPicture}[1]{
 	\begin{tikzpicture}
-		% Boundary box
 		\fill[white] (-\boundaryboxx,-\boundaryboxy) rectangle (\boundaryboxx,\boundaryboxy);
-
-		% Centerpoint of the timer
 		\coordinate (O) at (0,0);
 
-		% Events
-		% Start of attendance check 
 		\ifdefined\startAttendanceCheck
-			\pgfmathsetmacro{\startAttendanceCheckAngle}{(int(\startAttendanceCheck)/int(\duration)) * 360 + 90};
-			\coordinate (startAttendanceCheckInner) at ($(O) + (\startAttendanceCheckAngle:\outerradius)$);
-			\coordinate (startAttendanceCheckOuter) at ($(O) + (\startAttendanceCheckAngle:\eventradius)$);
-			\coordinate (startAttendanceCheckText) at ($(O) + (\startAttendanceCheckAngle:\eventradius) + (-0.3cm,0)$);
-			\pgfmathparse{(int(\startAttendanceCheck)*60)-int(#1)}
-			\ifthenelse{0<\pgfmathresult}{
-				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=lightgray, anchor=north east] {in \hours{remainingTime(#1,\startAttendanceCheck)}h \minutes{remainingTime(#1,\startAttendanceCheck)}min};
-			}{
-				\draw[faugray, line width=0.5mm] (startAttendanceCheckInner) -- (startAttendanceCheckOuter) -- (startAttendanceCheckText) node[left, font=\footnotesize, text=faugray] {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}} node[below, font=\scriptsize, text=faured!50, anchor=north east] {\translation{Started}{Gestartet}};
-			}
+			\pgfmathtruncatemacro{\attendanceSeconds}{round(\startAttendanceCheck*60)}
+			\pgfmathsetmacro{\attendanceAngle}{\timerTrackStartAngle+(\attendanceSeconds/\timerBaseSeconds)*\timerTrackSweepAngle}
+			\pgfmathtruncatemacro{\attendanceRemaining}{remainingTime(#1,\attendanceSeconds)}
+			\coordinate (attendanceInner) at ($(O)+(\attendanceAngle:\outerradius)$);
+			\coordinate (attendanceOuter) at ($(O)+(\attendanceAngle:\eventradius)$);
+			\coordinate (attendanceText) at ($(attendanceOuter)+(-0.3cm,0)$);
+			\draw[faugray,line width=0.5mm] (attendanceInner) -- (attendanceOuter) -- (attendanceText);
+			\node[anchor=east,font=\footnotesize,text=faugray] at (attendanceText) {\translation{Start of the attendance check}{Beginn der Anwesenheitskontrolle}};
+			\ifnum\attendanceRemaining>0\relax
+				\node[anchor=north east,font=\scriptsize,text=lightgray] at (attendanceText) {in \hours{\attendanceRemaining}h \minutes{\attendanceRemaining}min};
+			\else
+				\node[anchor=north east,font=\scriptsize,text=faured!50] at (attendanceText) {\translation{Started}{Gestartet}};
+			\fi
 		\fi
 
-		% Latest early hand-in
 		\ifdefined\latestEarlyHandIn
-			\pgfmathsetmacro{\latestEarlyHandInAngle}{(int(\latestEarlyHandIn)/int(\duration)) * 360 + 90};
-			\coordinate (latestEarlyHandInInner) at ($(O) + (\latestEarlyHandInAngle:\outerradius)$);
-			\coordinate (latestEarlyHandInOuter) at ($(O) + (\latestEarlyHandInAngle:\eventradius)$);
-			\coordinate (latestEarlyHandInText) at ($(O) + (\latestEarlyHandInAngle:\eventradius) + (0.3cm,0)$);
-			\pgfmathparse{(int(\latestEarlyHandIn)*60)-int(#1)}
-			\ifthenelse{0<\pgfmathresult}{
-				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=lightgray, anchor=north west] {in \hours{remainingTime(#1,\latestEarlyHandIn)}h \minutes{remainingTime(#1,\latestEarlyHandIn)}min};
-			}{
-				\draw[faugray, line width=0.5mm] (latestEarlyHandInInner) -- (latestEarlyHandInOuter) -- (latestEarlyHandInText) node[right, font=\footnotesize, text=faugray] {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}} node[below, font=\scriptsize, text=faured!50, anchor=north west] {\translation{No longer possible}{Nicht mehr möglich}};
-			}
+			\pgfmathtruncatemacro{\earlyHandInSeconds}{round(\latestEarlyHandIn*60)}
+			\pgfmathsetmacro{\earlyHandInAngle}{\timerTrackStartAngle+(\earlyHandInSeconds/\timerBaseSeconds)*\timerTrackSweepAngle}
+			\pgfmathtruncatemacro{\earlyHandInRemaining}{remainingTime(#1,\earlyHandInSeconds)}
+			\coordinate (earlyHandInInner) at ($(O)+(\earlyHandInAngle:\outerradius)$);
+			\coordinate (earlyHandInOuter) at ($(O)+(\earlyHandInAngle:\eventradius)$);
+			\coordinate (earlyHandInText) at ($(earlyHandInOuter)+(0.3cm,0)$);
+			\draw[faugray,line width=0.5mm] (earlyHandInInner) -- (earlyHandInOuter) -- (earlyHandInText);
+			\node[anchor=west,font=\footnotesize,text=faugray] at (earlyHandInText) {\translation{Latest early hand-in}{Späteste vorzeitige Abgabe}};
+			\ifnum\earlyHandInRemaining>0\relax
+				\node[anchor=north west,font=\scriptsize,text=lightgray] at (earlyHandInText) {in \hours{\earlyHandInRemaining}h \minutes{\earlyHandInRemaining}min};
+			\else
+				\node[anchor=north west,font=\scriptsize,text=faured!50] at (earlyHandInText) {\translation{No longer possible}{Nicht mehr möglich}};
+			\fi
 		\fi
 
-		% Shadow circle around the timer
 		\fill[white] (O) circle (\shadowradius);
-
-		% Timer
 		\fill[faugray!30] (O) circle (\outerradius);
-		\pgfmathparse{(\duration*60)-#1}
-		\ifthenelse{0<\pgfmathresult}{
-			% There is still time left
-			\ifthenelse{300<\pgfmathresult}{\fill[faucyan!50] (O) -- (0, \outerradius)}{\ifthenelse{60<\pgfmathresult}{\fill[fauorange!50] (O) -- (0, \outerradius)}{\fill[faured!50] (O) -- (0, \outerradius)}}
-			arc (90:90-3.6*percent(remainingTime(#1,\duration),\duration*60):\outerradius) -- (O);
-		}{
-			% Time is up
-			\fill[faured!30] (0,0) -- (0, \outerradius)
-			arc (90:90-3.6*100:\outerradius) -- (0,0);
-		}
+		\pgfmathtruncatemacro{\classicTimerRemaining}{remainingTime(#1,\timerBaseSeconds)}
+		\pgfmathtruncatemacro{\classicTimerElapsed}{min(#1,\timerBaseSeconds)}
+		\pgfmathsetmacro{\classicTimerBoundaryAngle}{\timerTrackStartAngle+(\classicTimerElapsed/\timerBaseSeconds)*\timerTrackSweepAngle}
+		\ifnum\classicTimerRemaining>0\relax
+			\ifnum\classicTimerRemaining>300\relax
+				\def\timerColor{faucyan!50}
+			\else
+				\ifnum\classicTimerRemaining>60\relax
+					\def\timerColor{fauorange!50}
+				\else
+					\def\timerColor{faured!50}
+				\fi
+			\fi
+			\fill[\timerColor] (O) -- ($(O)+(\timerTrackEndAngle:\outerradius)$)
+				arc (\timerTrackEndAngle:\classicTimerBoundaryAngle:\outerradius) -- cycle;
+		\else
+			\fill[faured!30] (O) circle (\outerradius);
+		\fi
 		\fill[white] (O) circle (\innerradius);
+		\timerTrackOrientation{\classicTimerBoundaryAngle}{#1}
+		\ifdefined\startAttendanceCheck
+			\ifnum\attendanceRemaining>0\relax
+				\def\timerEventMarkerColor{faucyan!30}
+			\else
+				\def\timerEventMarkerColor{faugray!45}
+			\fi
+			\timerRingEventMarkerAtAngle{\attendanceAngle}{\timerEventMarkerColor}
+		\fi
+		\ifdefined\latestEarlyHandIn
+			\ifnum\earlyHandInRemaining>0\relax
+				\def\timerEventMarkerColor{faucyan!30}
+			\else
+				\def\timerEventMarkerColor{faugray!45}
+			\fi
+			\timerRingEventMarkerAtAngle{\earlyHandInAngle}{\timerEventMarkerColor}
+		\fi
 
-		\ifthenelse{0<\pgfmathresult}{
-			% There is still time left
-			\node[text width=3cm,align=center,font=\small,text=lightgray] at (0,0.45) {\translation{Time left:}{Noch:}};
+		\ifnum\classicTimerRemaining>0\relax
+			\node[text width=3cm,align=center,font=\small,text=lightgray] at ($(O)+(0,0.45)$) {\translation{Time left:}{Noch:}};
 			\node[text width=3cm,align=center,font=\Large,text=darkgray] at (O) {
-				\hours{remainingTime(#1,\duration)}h \minutes{remainingTime(#1,\duration)}min
-				\ifthenelse{60>#1}{\small{\seconds{remainingTime(#1,\duration)}s}
-				}{\ifthenelse{\durationMinusFiveInSeconds<#1}{\small{\seconds{remainingTime(#1,\duration)}s}}{}}
+				\hours{\classicTimerRemaining}h \minutes{\classicTimerRemaining}min
+				\ifnum#1<60\relax
+					{\small\seconds{\classicTimerRemaining}s}
+				\else
+					\ifnum\classicTimerRemaining<301\relax{\small\seconds{\classicTimerRemaining}s}\fi
+				\fi
 			};
-			\node[text width=3cm,align=center,font=\large,text=lightgray] at (0,-0.45) {
-				\hours{\duration*60}h \minutes{\duration*60}min
-			};
-		}{
-			% Time is up
+			\node[text width=3cm,align=center,font=\large,text=lightgray] at ($(O)+(0,-0.45)$) {\hours{\timerBaseSeconds}h \minutes{\timerBaseSeconds}min};
+		\else
 			\node[text width=3cm,align=center,font=\LARGE,text=darkgray] at (O) {\translation{Time \\elapsed}{Zeit \\abgelaufen}};
-		}
+		\fi
 
-		% Text below the timer (explanation of the controls)
-		\node[font=\tiny,text=lightgray] at (0, -2.2) {\translation{Timer starts automatically.}{Timer startet automatisch.}};
-		\node[font=\tiny,text=lightgray] at (0, -2.45) {\translation{Updates every second in the first and the last five minutes of the exam and every minute for the rest of the time.}{Wird in der ersten und den letzten fünf Minuten der Klausur jede Sekunde aktualisiert und für den Rest der Zeit jede Minute.}};
-		%\node[font=\footnotesize,text=lightgray] at (0,-2.8) {\translation{Controls:}{Steuerung:}};
+		\node[font=\tiny,text=lightgray] at (0,-2.2) {\translation{Timer starts automatically.}{Timer startet automatisch.}};
+		\node[font=\tiny,text=lightgray] at (0,-2.45) {\translation{Updates every second in the first and the last five minutes of the exam and every minute for the rest of the time.}{Wird in der ersten und den letzten fünf Minuten der Klausur jede Sekunde aktualisiert und für den Rest der Zeit jede Minute.}};
 	\end{tikzpicture}
 }
 
+% Count-up timer used when percentage-based time extensions are configured.
+\newif\ifTimerDisplaySeconds
+\newcommand{\accommodationTimerPicture}[1]{
+	\begin{tikzpicture}
+		\fill[white] (-\boundaryboxx,-\boundaryboxy) rectangle (\boundaryboxx,\boundaryboxy);
+		\coordinate (O) at (0,-0.15);
+
+		% Show seconds precisely in those phases for which the animation contains
+		% one frame per second. Coarse frames keep the quieter hour/minute format.
+		\global\TimerDisplaySecondsfalse
+		\pgfmathtruncatemacro{\timerDisplayFinalFiveStart}{max(\timerTotalSeconds-300,0)}
+		\ifnum#1<60\relax\global\TimerDisplaySecondstrue\fi
+		\ifnum#1<\timerDisplayFinalFiveStart\relax\else\global\TimerDisplaySecondstrue\fi
+		\foreach \timerEventSecond in \timerEventSecondsList {
+			\pgfmathtruncatemacro{\timerDisplayEventWarningStart}{max(\timerEventSecond-60,0)}
+			\ifnum#1<\timerEventSecond\relax
+				\ifnum#1<\timerDisplayEventWarningStart\relax\else\global\TimerDisplaySecondstrue\fi
+			\fi
+		}
+
+		% The base time is kept separate at the bottom. All non-maximum events
+		% share one right-hand label column; the maximum extension balances the
+		% composition on the left. Count-specific vertical ranges use the available
+		% canvas without crowding sparse configurations.
+		\ifnum\timerExtensionCount>4\relax
+			\def\timerEventLabelFont{\scriptsize}
+			\def\timerEventTimeFont{\tiny}
+		\else
+			\def\timerEventLabelFont{\footnotesize}
+			\def\timerEventTimeFont{\scriptsize}
+		\fi
+		\ifnum\timerExtensionCount=1\relax
+			\def\timerExtensionLabelBottom{2.35}
+			\def\timerExtensionLabelTop{2.35}
+		\else\ifnum\timerExtensionCount=2\relax
+			\def\timerExtensionLabelBottom{0.55}
+			\def\timerExtensionLabelTop{2.55}
+		\else\ifnum\timerExtensionCount=3\relax
+			\def\timerExtensionLabelBottom{0.10}
+			\def\timerExtensionLabelTop{2.75}
+		\else\ifnum\timerExtensionCount=4\relax
+			\def\timerExtensionLabelBottom{-0.05}
+			\def\timerExtensionLabelTop{2.80}
+		\else
+			\def\timerExtensionLabelBottom{-0.10}
+			\def\timerExtensionLabelTop{2.55}
+		\fi\fi\fi\fi
+		\accommodationTimerEventArm{#1}{\timerBaseSeconds}{\translation{Regular time}{Reguläre Zeit}}{4.2}{-1.50}{3.0}{west}{faugray!70}
+		\foreach \timerExtension [count=\timerExtensionIndex] in \timerExtensionPercentagesSorted {
+			\pgfmathtruncatemacro{\timerExtensionSeconds}{round(\timerBaseSeconds*((100+\timerExtension)/100))}
+			\ifnum\timerExtensionCount=1\relax
+				\let\timerLabelY\timerExtensionLabelTop
+			\else
+				\pgfmathsetmacro{\timerLabelY}{\timerExtensionLabelBottom+(\timerExtensionIndex-1)*((\timerExtensionLabelTop-\timerExtensionLabelBottom)/(\timerExtensionCount-1))}
+			\fi
+			\ifnum\timerExtensionIndex=\timerExtensionCount\relax
+				\def\timerLabelX{-1.0}
+				\def\timerBendX{-0.6}
+				\def\timerLabelAnchor{east}
+			\else
+				\def\timerLabelX{4.2}
+				\def\timerBendX{3.0}
+				\def\timerLabelAnchor{west}
+			\fi
+			% Keep all event labels close to the classic faugray while retaining
+			% a restrained distinction between successive extension levels.
+			\pgfmathtruncatemacro{\timerExtensionGrayStrength}{round(70+30*\timerExtensionIndex/\timerExtensionCount)}
+			\edef\timerExtensionColor{faugray!\timerExtensionGrayStrength}
+			\accommodationTimerEventArm{#1}{\timerExtensionSeconds}{+\timerExtension\% \translation{time}{Zeit}}{\timerLabelX}{\timerLabelY}{\timerBendX}{\timerLabelAnchor}{\timerExtensionColor}
+		}
+
+		% Shadow and timer rings
+		\fill[white] (O) circle (\shadowradius);
+		\fill[faugray!30] (O) circle (\outerradius);
+		\pgfmathtruncatemacro{\timerRemaining}{remainingTime(#1,\timerTotalSeconds)}
+		\pgfmathtruncatemacro{\timerElapsed}{min(#1,\timerTotalSeconds)}
+		\pgfmathsetmacro{\timerBoundaryAngle}{\timerTrackStartAngle+(\timerElapsed/\timerTotalSeconds)*\timerTrackSweepAngle}
+		\ifnum\timerRemaining>0\relax
+			\fill[faucyan!50] (O) -- ($(O)+(\timerTrackEndAngle:\outerradius)$)
+				arc (\timerTrackEndAngle:\timerBoundaryAngle:\outerradius) -- cycle;
+		\else
+			\fill[faured!30] (O) circle (\outerradius);
+		\fi
+		\fill[white] (O) circle (\innerradius);
+		\timerTrackOrientation{\timerBoundaryAngle}{#1}
+		\accommodationTimerEventMarker{#1}{\timerBaseSeconds}
+		\foreach \timerExtension [count=\timerExtensionIndex] in \timerExtensionPercentagesSorted {
+			\pgfmathtruncatemacro{\timerExtensionSeconds}{round(\timerBaseSeconds*((100+\timerExtension)/100))}
+			\ifnum\timerExtensionIndex<\timerExtensionCount\relax
+				\accommodationTimerEventMarker{#1}{\timerExtensionSeconds}
+			\fi
+		}
+
+		\node[align=center] at (O) {
+			{\small\color{lightgray}\translation{Running for:}{Läuft seit:}}\\[0.1em]
+			{\Large\color{darkgray}\hours{\timerElapsed}h \minutes{\timerElapsed}min%
+				\ifTimerDisplaySeconds\ {\small\seconds{\timerElapsed}s}\fi}
+		};
+
+		\node[font=\tiny,text=lightgray] at (0,-2.30) {\translation{Timer starts automatically.}{Timer startet automatisch.}};
+		\node[font=\tiny,text=lightgray] at (0,-2.52) {\translation{Updates every 30 seconds and every second in the first minute, last five minutes, and minute before each marker.}{Wird alle 30 Sekunden sowie in der ersten, den letzten fünf und der Minute vor jeder Markierung jede Sekunde aktualisiert.}};
+	\end{tikzpicture}
+}
+
+\ifdefined\timeExtensionPercentages
+	\let\timerPicture\accommodationTimerPicture
+\else
+	\let\timerPicture\classicTimerPicture
+	\pgfmathtruncatemacro{\classicMiddleFrameCount}{max(round(\duration)-6,0)}
+	\pgfmathtruncatemacro{\classicFinalFiveStart}{max(\timerBaseSeconds-300,0)}
+\fi
+
+% Flags used to build a compact animation in accommodation mode: one frame
+% per second around all markers, otherwise one frame every 30 seconds.
+\newif\ifTimerFineStep
+\newif\ifTimerRenderFrame
+\newif\ifTimerFirstAnimationFrame
+
+\ifdefined\german
+	\def\timerCorrectionQuestion{Bisher abgelaufene Zeit als h:mm:ss eingeben. Maximum:}
+	\def\timerCorrectionTitle{Timer korrigieren}
+	\def\timerCorrectionInvalid{Bitte eine gueltige Zeit zwischen 0:00:00 und}
+	\def\timerPauseTooltip{Timer pausieren}
+	\def\timerResumeTooltip{Timer fortsetzen}
+	\def\timerCorrectionTooltip{Abgelaufene Zeit korrigieren}
+\else
+	\def\timerCorrectionQuestion{Enter the elapsed time as h:mm:ss. Maximum:}
+	\def\timerCorrectionTitle{Correct timer}
+	\def\timerCorrectionInvalid{Please enter a valid time between 0:00:00 and}
+	\def\timerPauseTooltip{Pause timer}
+	\def\timerResumeTooltip{Resume timer}
+	\def\timerCorrectionTooltip{Correct elapsed time}
+\fi
+
+% The animate package normally advances exactly one frame per Acrobat timer
+% callback. Delayed callbacks would therefore accumulate drift on slower
+% systems. Keep animate's controls and frame-duration metadata, but anchor
+% forward playback to elapsed wall-clock time. A separate one-second heartbeat
+% checks the clock even when the next visual frame is 30 or 60 seconds away.
+\makeatletter
+\let\exam@timer@original@animate@jsinit\@anim@@jsinit
+\gdef\@anim@@jsinit#1{%
+	\exam@timer@original@animate@jsinit{#1}%
+	if(typeof a#1_wallClockInitialized==='undefined'){%
+		a#1_wallClockInitialized=true;%
+		var a#1_wallTimes=new Array();%
+		var a#1_wallStart=0;%
+		var a#1_wallPausedElapsed=0;%
+		var a#1_wallUserPaused=false;%
+		var a#1_originalPlayRight=a#1_playRight;%
+		var a#1_timerPauseButton=this.getField('examTimerPauseButton');%
+		var a#1_timerResumeButton=this.getField('examTimerResumeButton');%
+		examTimerSetRunningControls=function(running){%
+			if(a#1_timerPauseButton&&a#1_timerResumeButton){%
+				a#1_timerPauseButton.display=running?display.visible:display.hidden;%
+				a#1_timerResumeButton.display=running?display.hidden:display.visible;%
+				curdoc.dirty=false;%
+			}%
+		};%
+		a#1_wallTimes[0]=0;%
+		for(var i=0;i<\@anim@maxframe;i++){%
+			var frameFps=typeof a#1_nFpsAt==='undefined'?a#1_fps:a#1_nFpsAt[i];%
+			a#1_wallTimes[i+1]=a#1_wallTimes[i]+1000/frameFps;%
+		}%
+		a#1_playRight=function(){%
+			if(!a#1_playing){%
+				var resumeElapsed=a#1_wallUserPaused?a#1_wallPausedElapsed:a#1_wallTimes[a#1_idx];%
+				a#1_wallStart=(new Date()).getTime()-resumeElapsed;%
+			}%
+			a#1_originalPlayRight();%
+			a#1_wallUserPaused=false;%
+			examTimerSetRunningControls(true);%
+			var heartbeatInt;%
+			try{heartbeatInt=app.setInterval('a#1_gotoNext()',1000);}catch(e){}%
+			if(heartbeatInt){%
+				try{app.clearInterval(a#1_int);}catch(e){}%
+				a#1_int=heartbeatInt;%
+			}%
+		};%
+		a#1_gotoNext=function(){%
+			var elapsed=(new Date()).getTime()-a#1_wallStart+50;%
+			var target=a#1_idx;%
+			while(target<\@anim@maxframe&&a#1_wallTimes[target+1]<=elapsed){target++;}%
+			if(target>=\@anim@maxframe){%
+				a#1_stopLast();%
+				a#1_wallPausedElapsed=a#1_wallTimes[\@anim@maxframe];%
+				a#1_wallUserPaused=true;%
+				examTimerSetRunningControls(false);%
+			}else if(target>a#1_idx){%
+				a#1_seekFrame(target);%
+			}%
+		};%
+		examTimerPause=function(){%
+			if(a#1_playing){%
+				a#1_wallPausedElapsed=Math.max(0,Math.min(a#1_wallTimes[\@anim@maxframe],(new Date()).getTime()-a#1_wallStart));%
+				a#1_wallUserPaused=true;%
+				a#1_pause();%
+				examTimerSetRunningControls(false);%
+			}%
+		};%
+		examTimerResume=function(){%
+			if(!a#1_playing&&a#1_wallPausedElapsed<a#1_wallTimes[\@anim@maxframe]){%
+				a#1_wallUserPaused=true;%
+				a#1_playFwd();%
+			}%
+		};%
+		examTimerCorrectElapsed=function(){%
+			var wasPlaying=a#1_playing;%
+			var currentElapsed=wasPlaying?(new Date()).getTime()-a#1_wallStart:(a#1_wallUserPaused?a#1_wallPausedElapsed:a#1_wallTimes[a#1_idx]);%
+			currentElapsed=Math.max(0,Math.min(a#1_wallTimes[\@anim@maxframe],currentElapsed));%
+			if(wasPlaying){examTimerPause();}%
+			var pad=function(value){return value<10?'0'+value:String(value);};%
+			var formatTime=function(milliseconds){%
+				var total=Math.floor(milliseconds/1000);%
+				var wholeHours=Math.floor(total/3600);%
+				var afterHours=total-wholeHours*3600;%
+				var wholeMinutes=Math.floor(afterHours/60);%
+				var wholeSeconds=afterHours-wholeMinutes*60;%
+				return wholeHours+':'+pad(wholeMinutes)+':'+pad(wholeSeconds);%
+			};%
+			var maximumText=formatTime(a#1_wallTimes[\@anim@maxframe]);%
+			while(true){%
+				var answer=app.response({cQuestion:'\timerCorrectionQuestion'+' '+maximumText,cTitle:'\timerCorrectionTitle',cDefault:formatTime(currentElapsed)});%
+				if(answer===null){%
+					if(wasPlaying){examTimerResume();}%
+					return;%
+				}%
+				var parts=String(answer).split(':');%
+				if(parts.length===3&&parts[0]!==''&&parts[1]!==''&&parts[2]!==''){%
+					var hours=Number(parts[0]);%
+					var minutes=Number(parts[1]);%
+					var seconds=Number(parts[2]);%
+					var correctedSeconds=hours*3600+minutes*60+seconds;%
+					if(isFinite(hours)&&isFinite(minutes)&&isFinite(seconds)&&hours>=0&&minutes>=0&&minutes<60&&seconds>=0&&seconds<60&&Math.floor(hours)===hours&&Math.floor(minutes)===minutes&&Math.floor(seconds)===seconds&&correctedSeconds*1000<=a#1_wallTimes[\@anim@maxframe]){%
+						var correctedElapsed=correctedSeconds*1000;%
+						var correctedFrame=0;%
+						while(correctedFrame<\@anim@maxframe&&a#1_wallTimes[correctedFrame+1]<=correctedElapsed+50){correctedFrame++;}%
+						a#1_seekFrame(correctedFrame);%
+						a#1_wallPausedElapsed=correctedElapsed;%
+						a#1_wallUserPaused=true;%
+						a#1_isPaused=true;%
+						if(wasPlaying&&correctedFrame<\@anim@maxframe){examTimerResume();}%
+						return;%
+					}%
+				}%
+				app.alert('\timerCorrectionInvalid'+' '+maximumText+'.');%
+			}%
+		};%
+	}%
+}
+\makeatother
+
+% Compact custom timer controls. Pause and resume are overlaid widget buttons;
+% JavaScript switches their visibility so that only the applicable action is
+% shown. The correction button remains visible beside them.
+\ExplSyntaxOn
+\cs_new_protected:Npn \timer_control_widget:nnnnn #1#2#3#4#5
+{
+	\hbox_set:Nn \l_tmpa_box {#5}
+	\pbs_pdfxform:nnnnn {0}{1}{}{}{\l_tmpa_box}
+	\tl_set:Nx \l_tmpa_tl {\pbs_pdflastxform:}
+	\pbs_pdfannot:nnnn {1em}{1em}{0pt}
+	{
+		/Subtype/Widget~/FT/Btn~/Ff~65536~/F~#3~/BS<</W~0>>~/H/I~
+		/T(#1)~/TU(#4)~/AA<</D<</S/JavaScript/JS(#2)>>>>~
+		/AP<</N~\l_tmpa_tl>>~/MK<</TP~1~/I~\l_tmpa_tl~/IF<</S/A~/FB~true>>>>
+	}
+	\pbs_appendtofields:n {\pbs_pdflastann:}
+}
+\cs_new_eq:NN \timerControlWidget \timer_control_widget:nnnnn
+\ExplSyntaxOff
+
+\newcommand{\timerControlButtonFrame}[1]{%
+	\begin{tikzpicture}[x=1em,y=1em,baseline=-0.12em,line cap=round,line join=round]
+		\path[use as bounding box] (0,0) rectangle (1,1);
+		\draw[rounded corners=0.08em,line width=0.45pt] (0.06,0.06) rectangle (0.94,0.94);
+		#1
+	\end{tikzpicture}%
+}
+\newcommand{\timerPauseButtonIcon}{%
+	\timerControlButtonFrame{%
+		\fill (0.34,0.27) rectangle (0.44,0.73);
+		\fill (0.56,0.27) rectangle (0.66,0.73);
+	}%
+}
+\newcommand{\timerResumeButtonIcon}{%
+	\timerControlButtonFrame{%
+		\fill (0.36,0.25) -- (0.72,0.50) -- (0.36,0.75) -- cycle;
+	}%
+}
+\newcommand{\timerCorrectionButtonIcon}{%
+	\timerControlButtonFrame{%
+		\draw[line width=0.55pt] (0.43,0.55) circle (0.22);
+		\draw[line width=0.55pt] (0.43,0.55) -- (0.43,0.40);
+		\draw[line width=0.55pt] (0.43,0.55) -- (0.54,0.61);
+		\draw[line width=0.85pt] (0.56,0.27) -- (0.77,0.48);
+		\draw[line width=0.45pt] (0.54,0.25) -- (0.56,0.27) -- (0.58,0.29);
+	}%
+}
+\newcommand{\timerPauseResumeControl}{%
+	\hbox{%
+		\makebox[1em][l]{\rule{0pt}{1em}}%
+		\kern-1em%
+		\timerControlWidget{examTimerPauseButton}{examTimerPause();}{0}{\timerPauseTooltip}{\timerPauseButtonIcon}%
+		\timerControlWidget{examTimerResumeButton}{examTimerResume();}{2}{\timerResumeTooltip}{\timerResumeButtonIcon}%
+		\kern1em%
+	}%
+}
+\newcommand{\timerCorrectionControl}{%
+	\hbox{%
+		\makebox[1em][l]{\rule{0pt}{1em}}%
+		\kern-1em%
+		\timerControlWidget{examTimerCorrectionButton}{examTimerCorrectElapsed();}{0}{\timerCorrectionTooltip}{\timerCorrectionButtonIcon}%
+		\kern1em%
+	}%
+}
+
+\ifdefined\timeExtensionPercentages
+	% Build the animation body before entering animateinline. The animate package
+	% requires frame separators at the top level and cannot consume them directly
+	% from a foreach loop inside its first frame.
+	\ExplSyntaxOn
+	\tl_new:N \g_exam_timer_animation_tl
+	\cs_new_protected:Npn \exam_timer_animation_clear:
+		{\tl_gclear:N \g_exam_timer_animation_tl}
+	\cs_new_protected:Npn \exam_timer_animation_append_first:n #1
+		{\tl_gput_right:Nx \g_exam_timer_animation_tl {\exp_not:N \timerPicture {#1}}}
+	\cs_new_protected:Npn \exam_timer_animation_append_fine:n #1
+		{\tl_gput_right:Nx \g_exam_timer_animation_tl {\exp_not:N \newframe [1]\exp_not:N \timerPicture {#1}}}
+	\cs_new_protected:Npn \exam_timer_animation_append_coarse:n #1
+		{\tl_gput_right:Nx \g_exam_timer_animation_tl {\exp_not:N \newframe [0.0333333333333333]\exp_not:N \timerPicture {#1}}}
+	\cs_new_protected:Npn \exam_timer_animation_render:
+		{\tl_use:N \g_exam_timer_animation_tl}
+	\cs_new_eq:NN \timerAnimationClear \exam_timer_animation_clear:
+	\cs_new_eq:NN \timerAnimationAppendFirst \exam_timer_animation_append_first:n
+	\cs_new_eq:NN \timerAnimationAppendFine \exam_timer_animation_append_fine:n
+	\cs_new_eq:NN \timerAnimationAppendCoarse \exam_timer_animation_append_coarse:n
+	\cs_new_eq:NN \renderTimerAnimation \exam_timer_animation_render:
+	\ExplSyntaxOff
+
+	\timerAnimationClear
+	\TimerFirstAnimationFrametrue
+	\pgfmathtruncatemacro{\timerFinalFiveStart}{max(\timerTotalSeconds-300,0)}
+	\foreach \timerElapsedSecond in {0,...,\timerTotalSeconds} {
+		\global\TimerFineStepfalse
+		\global\TimerRenderFramefalse
+		\ifnum\timerElapsedSecond<60\relax\global\TimerFineSteptrue\fi
+		\ifnum\timerElapsedSecond<\timerFinalFiveStart\relax\else\global\TimerFineSteptrue\fi
+		\foreach \timerEventSecond in \timerEventSecondsList {
+			\pgfmathtruncatemacro{\timerEventWarningStart}{max(\timerEventSecond-60,0)}
+			\ifnum\timerElapsedSecond<\timerEventSecond\relax
+				\ifnum\timerElapsedSecond<\timerEventWarningStart\relax\else\global\TimerFineSteptrue\fi
+			\fi
+			\ifnum\timerElapsedSecond=\timerEventSecond\relax\global\TimerRenderFrametrue\fi
+		}
+		\ifTimerFineStep
+			\global\TimerRenderFrametrue
+		\else
+			\pgfmathtruncatemacro{\timerFrameModulo}{mod(\timerElapsedSecond,30)}
+			\ifnum\timerFrameModulo=0\relax\global\TimerRenderFrametrue\fi
+		\fi
+		\ifTimerRenderFrame
+			\ifTimerFirstAnimationFrame
+				\timerAnimationAppendFirst{\timerElapsedSecond}
+				\global\TimerFirstAnimationFramefalse
+			\else
+				\ifTimerFineStep
+					\timerAnimationAppendFine{\timerElapsedSecond}
+				\else
+					\timerAnimationAppendCoarse{\timerElapsedSecond}
+				\fi
+			\fi
+		\fi
+	}
+\fi
+
 \begin{frame}{\translation{Then let's start ...}{Dann los ...}}
 	\begin{center}
-		\begin{animateinline}[controls={play, stop, step}, buttonsize=1em, autoplay, poster=first]{1}
-			\multiframe{60}{n=0+1}{
-				\timerPicture{\n}
-			}
-			% One Frame per Minute in FPS is 1/60. 
-			\newframe[0.0166666666666667]
-			\multiframe{\durationMinusSix}{n=60+60}{
-				\timerPicture{\n}
-			}
-			\newframe[1]
-			\multiframe{301}{n=\durationMinusFiveInSeconds+1}{
-				\timerPicture{\n}
-			}
+		\begin{animateinline}[autoplay, poster=first, nomouse]{1}
+			\ifdefined\timeExtensionPercentages
+				\renderTimerAnimation
+			\else
+				\multiframe{60}{n=0+1}{
+					\timerPicture{\n}
+				}
+				\newframe[0.0166666666666667]
+				\multiframe{\classicMiddleFrameCount}{n=60+60}{
+					\timerPicture{\n}
+				}
+				\newframe[1]
+				\multiframe{301}{n=\classicFinalFiveStart+1}{
+					\timerPicture{\n}
+				}
+			\fi
 		\end{animateinline}
+		\par\vspace{0.08em}
+		\leavevmode
+		\timerPauseResumeControl\hspace{0.16em}%
+		\timerCorrectionControl
 	\end{center}
 \end{frame}
 
