@@ -14,9 +14,16 @@ Here is a small list of tested compatible/not compatible readers:
 | ---      | ---      | ---      |
 | Adobe Acrobat Pro | Windows 11 Pro | 22.003.20322 |
 | Adobe Acrobat Pro | macOS Sonoma 14.2.1 | 23.8.20470.0 |
-| Okular | Debian 11 | 20.12.3 |
 
 It can be assumed that the compatible PDF readers are compatible regardless of operating system and version (at least if newer than the tested one). A short test before the exam is nevertheless recommended.
+
+### Partially Compatible
+
+| PDF Reader | Operating System | Tested Version of the PDF Reader |
+| ---      | ---      | ---      |
+| Okular | Debian 11 | 20.12.3 |
+
+The Okular test predates the latest timer extensions. Okular can display the presentation and supports the basic animation mechanisms, but the current timer is not fully compatible: it may not start automatically because Okular does not process the PDF `PageVisible` action, and the manual elapsed-time correction is unavailable because Okular does not implement `app.response`. Use a tested Adobe Acrobat version for the complete interactive timer workflow.
 
 ### Not Compatible 
 
@@ -100,7 +107,7 @@ Two ready-to-use, 60-minute demo presentations show both timer configurations:
 - [Download the standard demo](demo/exam-introduction-demo.pdf)
 - [Download the demo with time extensions](demo/exam-introduction-demo-with-time-extensions.pdf) (10%, 20%, 25%, and 30%)
 
-The source configurations are stored next to the PDFs. Download a PDF and open it in one of the compatible readers listed above to try the interactive timer; browser PDF viewers generally only show its first frame.
+The source configurations are stored next to the PDFs. Download a PDF and open it in one of the fully compatible readers listed above to try the complete interactive timer; browser PDF viewers generally only show its first frame.
 
 ## Preview
 
