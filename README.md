@@ -113,3 +113,12 @@ The timer previews below compress the complete runtime into a few seconds:
 | Standard countdown | Time extensions |
 | --- | --- |
 | ![Accelerated preview of the standard countdown timer](demo/previews/timer-standard.gif) | ![Accelerated preview of the timer with multiple time extensions](demo/previews/timer-with-time-extensions.gif) |
+
+## License
+
+Except for the FAU branding assets in `fau-res/`, this project is licensed under
+the [Creative Commons Attribution-ShareAlike 4.0 International
+License](LICENSE). Adaptations may be shared for any purpose provided that
+appropriate credit is given and the adapted material is distributed under the
+same license. See [LICENSE-NOTICE.md](LICENSE-NOTICE.md) for the license scope,
+attributions, and the FAU branding exception.
