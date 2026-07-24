@@ -92,3 +92,24 @@ It should look like this:
 % Import the presentation
 \include{src/presentation}
 ```
+
+## Compiled demo presentations
+
+Two ready-to-use, 60-minute demo presentations show both timer configurations:
+
+- [Download the standard demo](demo/exam-introduction-demo.pdf)
+- [Download the demo with time extensions](demo/exam-introduction-demo-with-time-extensions.pdf) (10%, 20%, 25%, and 30%)
+
+The source configurations are stored next to the PDFs. Download a PDF and open it in one of the compatible readers listed above to try the interactive timer; browser PDF viewers generally only show its first frame.
+
+## Preview
+
+| Welcome and permitted materials | Answer marking | Matriculation number |
+| --- | --- | --- |
+| ![Welcome slide with an overview of required, permitted, and forbidden items](demo/previews/welcome.png) | ![Slide explaining valid and invalid answer markings](demo/previews/answer-marking.png) | ![Slide explaining how to encode a matriculation number](demo/previews/matriculation-number.png) |
+
+The timer previews below compress the complete runtime into a few seconds:
+
+| Standard countdown | Time extensions |
+| --- | --- |
+| ![Accelerated preview of the standard countdown timer](demo/previews/timer-standard.gif) | ![Accelerated preview of the timer with multiple time extensions](demo/previews/timer-with-time-extensions.gif) |
